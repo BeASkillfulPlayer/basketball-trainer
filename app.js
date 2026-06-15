@@ -196,7 +196,7 @@ function goBack() {
 }
 
 function switchTab(tab) {
-  const pages = { home:'home', students:'home', settings:'settings' };
+  const pages = { home:'home', add:'add', settings:'settings' };
   const page = pages[tab] || 'home';
   if (currentPage === page) return;
   document.getElementById('page-' + currentPage).classList.remove('active');
