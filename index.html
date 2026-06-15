@@ -47,8 +47,12 @@
 
   <!-- ====== 工作台（首页） ====== -->
   <div id="page-home" class="page">
-    <div class="nav-bar">
-      <div class="nav-title">篮球训练管理</div>
+    <div class="nav-bar-large">
+      <div class="nav-large-top">
+        <span class="nav-large-date" id="nav-date"></span>
+        <div class="nav-large-avatar" id="nav-avatar" onclick="switchTab('settings')">👤</div>
+      </div>
+      <div class="nav-large-title">学员</div>
     </div>
     <div class="page-content">
       <!-- 问候 -->
@@ -238,7 +242,7 @@
     <div class="nav-bar"><div class="nav-title">设置</div></div>
     <div class="page-content">
       <div class="settings-profile">
-        <div class="avatar" id="settings-avatar" style="width:60px;height:60px;font-size:24px;background:linear-gradient(135deg,#007AFF,#34C759);">👤</div>
+        <div class="avatar" id="settings-avatar" style="width:60px;height:60px;font-size:24px;background:linear-gradient(135deg,#007AFF,#34C759);margin:0 auto 4px;">👤</div>
         <div class="settings-name" id="settings-name"></div>
         <div class="settings-phone" id="settings-phone"></div>
         <div class="settings-id" id="settings-id"></div>

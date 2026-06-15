@@ -148,6 +148,7 @@ function countNodeProgress(node, progress) {
 function genId() { return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7); }
 function todayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function thisMonth() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+function hashColor(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i); return Math.abs(h)%8; }
 
 function showToast(msg) {
   const el = document.getElementById('toast');
@@ -228,7 +229,7 @@ function renderLogin() {
   } else {
     listEl.innerHTML = trainers.map(t => `
       <div class="trainer-card" onclick="loginTrainer('${t.id}')">
-        <div class="avatar-sm" style="background:linear-gradient(135deg,#007AFF,#34C759);">${(t.name||'?')[0]}</div>
+        <div class="avatar-sm avatar-c${hashColor(t.id)}">${(t.name||'?')[0]}</div>
         <div class="trainer-info">
           <div class="trainer-name">${escHtml(t.name)}</div>
           <div class="trainer-phone">${escHtml(t.phone||'')}</div>
@@ -309,6 +310,11 @@ function renderHome() {
 
   const trainer = DB.getTrainerById(DB.getCurrentTrainerId());
   document.getElementById('greeting-name').textContent = trainer ? trainer.name : '教练';
+  // 导航栏头像和日期
+  document.getElementById('nav-avatar').textContent = trainer ? (trainer.name||'?')[0] : '?';
+  const days = ['日','一','二','三','四','五','六'];
+  const now = new Date();
+  document.getElementById('nav-date').textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 星期'+days[now.getDay()];
 
   // 提醒
   const alerts = [];
@@ -381,7 +387,7 @@ function renderHome() {
   listEl.innerHTML = filteredStudents.map(s => `
     <div class="student-card" onclick="openDetail('${s.id}')">
       <div class="student-card-top">
-        <div class="avatar-sm">${(s.name||'?')[0]}</div>
+        <div class="avatar-sm avatar-c${hashColor(s.id)}">${(s.name||'?')[0]}</div>
         <div class="student-info">
           <div class="student-name">${escHtml(s.name)}</div>
           <div class="student-meta">
@@ -548,6 +554,7 @@ function renderDetail(id) {
 
   document.getElementById('detail-name').textContent = student.name;
   document.getElementById('detail-avatar').textContent = (student.name || '?')[0];
+  document.getElementById('detail-avatar').className = 'avatar avatar-c' + hashColor(student.id);
   document.getElementById('detail-info-name').textContent = student.name;
   document.getElementById('detail-info-meta').textContent = (student.age ? student.age + '岁 · ' : '') + (student.gender || '') + (student.group ? ' · ' + student.group : '');
   document.getElementById('detail-info-date').textContent = student.startDate ? '📅 入学：' + student.startDate : '';
@@ -684,6 +691,7 @@ function renderProgressTree(studentId) {
   if (!student) { goBack(); return; }
   document.getElementById('prog-title').textContent = student.name + ' · 训练进程';
   document.getElementById('prog-avatar').textContent = (student.name || '?')[0];
+  document.getElementById('prog-avatar').className = 'avatar avatar-c' + hashColor(student.id);
   const curriculum = DB.getCurriculum();
   const progress = DB.getStudentProgress(studentId);
   const totalItems = countLeafItems(curriculum), completed = countCompletedItems(curriculum, progress);
@@ -816,6 +824,7 @@ function renderSettings() {
   document.getElementById('settings-name').textContent = trainer.name;
   document.getElementById('settings-phone').textContent = trainer.phone || '未设置';
   document.getElementById('settings-id').textContent = 'ID: ' + trainer.id.slice(0,12) + '...';
+  document.getElementById('settings-avatar').textContent = (trainer.name||'?')[0];
 
   // 统计
   const students = DB.getStudents();
