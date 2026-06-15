@@ -109,48 +109,48 @@ function logoutTrainer() { if (!confirm('确定退出？')) return; DB.setTraine
 function renderDashboard() {
   const ss = DB.getStudents(), rs = DB.getRecords(), ps = DB.getPayments(), exps = DB.getExpenses(), today = todayStr(), month = thisMonth(), trainer = DB.getTrainerById(DB.getCurrentTrainerId());
   const monthIncome = ps.filter(p => p.date.startsWith(month)).reduce((s,p) => s + p.amount, 0);
-  const monthExpense = exps.filter(e => e.date.startsWith(month)).reduce((s,e) => s + e.amount, 0);
   const todayIds = new Set(rs.filter(r => r.date === today).map(r => r.studentId));
+  const journalCount = DB.getJournals().length;
 
-  // Header
-  document.getElementById('dash-greeting').textContent = 'Hello, ' + (trainer ? trainer.name : '教练');
-  const days = ['日','一','二','三','四','五','六']; const now = new Date();
-  document.getElementById('dash-date').textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 星期'+days[now.getDay()];
-  document.getElementById('dash-avatar-btn').textContent = trainer ? (trainer.name||'?')[0] : '?';
+  // Avatar
+  var avatarEl = document.getElementById('dash-avatar-lg');
+  if (trainer && trainer.avatar) {
+    avatarEl.innerHTML = '<img src="'+trainer.avatar+'" alt="">';
+  } else {
+    avatarEl.textContent = trainer ? (trainer.name||'?')[0] : '?';
+    avatarEl.innerHTML = avatarEl.textContent;
+  }
+  document.getElementById('dash-trainer-name').textContent = trainer ? trainer.name : '教练';
 
-  // Stats
-  document.getElementById('dash-stat-students').textContent = ss.length;
-  document.getElementById('dash-stat-today').textContent = todayIds.size;
-  document.getElementById('dash-stat-income').textContent = '¥' + monthIncome;
-
-  // Today schedule
-  const sched = DB.getSchedule(), todaySched = sched.filter(s => s.date === today).sort((a,b) => (a.time||'').localeCompare(b.time||''));
-  const schedSec = document.getElementById('dash-schedule-section');
-  if (todaySched.length > 0) { schedSec.style.display = 'block'; document.getElementById('dash-schedule-list').innerHTML = todaySched.map(sc => { const st = ss.find(s => s.id === sc.studentId); return '<div class="schedule-mini-item" onclick="openDetailFromDash(\''+sc.studentId+'\')"><span class="sched-mini-time">'+(sc.time||'--:--')+'</span><span class="sched-mini-name">'+(st?escHtml(st.name):'未知')+'</span><span class="sched-mini-note">'+escHtml(sc.notes||'')+'</span></div>'; }).join(''); } else schedSec.style.display = 'none';
+  // 4 card stats
+  document.getElementById('dash-students-stat').textContent = ss.length + ' 位学员';
+  document.getElementById('dash-schedule-stat').textContent = '今日 ' + todayIds.size + ' 节课';
+  document.getElementById('dash-finance-stat').textContent = '本月 ¥' + monthIncome;
+  document.getElementById('dash-journal-stat').textContent = journalCount + ' 条记录';
 
   // Alerts
-  const alerts = []; ss.forEach(s => { if (s.remainingHours <= 0) alerts.push({ text: s.name + ' 课时已用完', type: 'danger', sid: s.id }); else if (s.remainingHours <= 2) alerts.push({ text: s.name + ' 仅剩' + s.remainingHours + '课时', type: 'warn', sid: s.id }); });
-  const d3 = new Date(); d3.setDate(d3.getDate()-3); const d3s = d3.toISOString().slice(0,10); ss.forEach(s => { const sr = rs.filter(r => r.studentId === s.id).sort((a,b) => b.date.localeCompare(a.date)); if (sr.length > 0 && sr[0].date < d3s) alerts.push({ text: s.name + ' ' + Math.floor((new Date() - new Date(sr[0].date)) / 86400000) + '天未上课', type: 'info', sid: s.id }); });
-  const alertSec = document.getElementById('dash-alerts-section');
-  if (alerts.length > 0) { alertSec.style.display = 'block'; document.getElementById('dash-alerts-list').innerHTML = alerts.slice(0, 5).map(a => '<div class="alert-mini '+a.type+'" onclick="openDetailFromDash(\''+a.sid+'\')"><span class="alert-mini-dot"></span>'+escHtml(a.text)+'</div>').join(''); } else alertSec.style.display = 'none';
+  var alerts = []; ss.forEach(function(s){ if (s.remainingHours <= 0) alerts.push({ text: s.name + ' 课时已用完', type: 'danger', sid: s.id }); else if (s.remainingHours <= 2) alerts.push({ text: s.name + ' 仅剩' + s.remainingHours + '课时', type: 'warn', sid: s.id }); });
+  var d3 = new Date(); d3.setDate(d3.getDate()-3); var d3s = d3.toISOString().slice(0,10); ss.forEach(function(s){ var sr = rs.filter(function(r){return r.studentId===s.id;}).sort(function(a,b){return b.date.localeCompare(a.date);}); if (sr.length > 0 && sr[0].date < d3s) alerts.push({ text: s.name + ' ' + Math.floor((new Date() - new Date(sr[0].date)) / 86400000) + '天未上课', type: 'info', sid: s.id }); });
+  var alertSec = document.getElementById('dash-alerts-section');
+  if (alerts.length > 0) { alertSec.style.display = 'block'; document.getElementById('dash-alerts-list').innerHTML = alerts.slice(0, 5).map(function(a){ return '<div class="alert-mini '+a.type+'" onclick="openDetailFromDash(\''+a.sid+'\')"><span class="alert-mini-dot"></span>'+escHtml(a.text)+'</div>'; }).join(''); } else alertSec.style.display = 'none';
 
-  // Recent students
-  const progress = DB.getProgress(), curriculum = DB.getCurriculum();
-  ss.forEach(s => { const sr = rs.filter(r => r.studentId === s.id).sort((a,b) => b.date.localeCompare(a.date)); s.lastDate = sr.length > 0 ? sr[0].date : null; });
-  const recent = ss.sort((a,b) => (b.lastDate||'0000').localeCompare(a.lastDate||'0000')).slice(0, 10);
-  document.getElementById('dash-students-row').innerHTML = recent.length === 0 ? '<span style="font-size:13px;color:var(--text-3);padding:10px 0;">暂无学员</span>' : recent.map(s => '<div class="student-mini-card" onclick="openDetailFromDash(\''+s.id+'\')"><div class="student-mini-avatar avatar-c'+hashColor(s.id)+'">'+(s.name||'?')[0]+'</div><span class="student-mini-name">'+escHtml(s.name)+'</span><span class="student-mini-hours">'+s.remainingHours+'课时</span></div>').join('');
-
-  // Finance snapshot
-  document.getElementById('dash-snap-income').textContent = '¥' + monthIncome;
-  document.getElementById('dash-snap-expense').textContent = '¥' + monthExpense;
-  document.getElementById('dash-snap-profit').textContent = (monthIncome - monthExpense >= 0 ? '¥' : '-¥') + Math.abs(monthIncome - monthExpense);
+  // Today schedule
+  var sched = DB.getSchedule(), todaySched = sched.filter(function(s){return s.date===today;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+  var schedSec = document.getElementById('dash-schedule-section');
+  if (todaySched.length > 0) { schedSec.style.display = 'block'; document.getElementById('dash-schedule-list').innerHTML = todaySched.map(function(sc){ var st = ss.find(function(s){return s.id===sc.studentId;}); return '<div class="schedule-mini-item" onclick="openDetailFromDash(\''+sc.studentId+'\')"><span class="sched-mini-time">'+(sc.time||'--:--')+'</span><span class="sched-mini-name">'+(st?escHtml(st.name):'未知')+'</span><span class="sched-mini-note">'+escHtml(sc.notes||'')+'</span></div>'; }).join(''); } else schedSec.style.display = 'none';
 }
 function openDetailFromDash(id) { navigateTo('detail', { id }); }
 
 // ==================== Profile (我的) ====================
 function renderProfile() {
   const trainer = DB.getTrainerById(DB.getCurrentTrainerId()); if (!trainer) return;
-  document.getElementById('prof-avatar').textContent = (trainer.name||'?')[0];
+  var profAvatar = document.getElementById('prof-avatar');
+  if (trainer.avatar) {
+    profAvatar.innerHTML = '<img src="'+trainer.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">';
+  } else {
+    profAvatar.textContent = (trainer.name||'?')[0];
+    profAvatar.innerHTML = profAvatar.textContent;
+  }
   document.getElementById('prof-name').textContent = trainer.name;
   document.getElementById('prof-phone').textContent = trainer.phone || '未设置手机号';
   document.getElementById('prof-bio').textContent = trainer.bio || '点击编辑添加个人简介...';
@@ -160,8 +160,9 @@ function renderProfile() {
   document.getElementById('prof-stat-income').textContent = '¥' + ps.reduce((s,p) => s + p.amount, 0);
 }
 function editProfile() { const t = DB.getTrainerById(DB.getCurrentTrainerId()); if (!t) return; document.getElementById('prof-edit-name').value = t.name || ''; document.getElementById('prof-edit-phone').value = t.phone || ''; document.getElementById('prof-edit-bio').value = t.bio || ''; document.getElementById('profile-modal').style.display = 'flex'; }
-function confirmProfileEdit() { const n = document.getElementById('prof-edit-name').value.trim(); if (!n) { showToast('姓名不能为空'); return; } DB.updateTrainer(DB.getCurrentTrainerId(), { name: n, phone: document.getElementById('prof-edit-phone').value.trim(), bio: document.getElementById('prof-edit-bio').value.trim() }); closeProfileModal(); renderProfile(); showToast('资料已更新'); }
+function confirmProfileEdit() { const n = document.getElementById('prof-edit-name').value.trim(); if (!n) { showToast('姓名不能为空'); return; } DB.updateTrainer(DB.getCurrentTrainerId(), { name: n, phone: document.getElementById('prof-edit-phone').value.trim(), bio: document.getElementById('prof-edit-bio').value.trim() }); closeProfileModal(); renderProfile(); renderDashboard(); showToast('资料已更新'); }
 function closeProfileModal() { document.getElementById('profile-modal').style.display = 'none'; }
+function uploadAvatar(event) { var file = event.target.files[0]; if (!file) return; if (file.size > 500000) { showToast('图片不能超过500KB'); return; } var reader = new FileReader(); reader.onload = function(e) { DB.updateTrainer(DB.getCurrentTrainerId(), { avatar: e.target.result }); renderProfile(); renderDashboard(); showToast('头像已更新'); }; reader.readAsDataURL(file); }
 
 // ==================== Students Page ====================
 function renderStudentsPage() {
