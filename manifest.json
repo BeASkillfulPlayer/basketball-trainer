@@ -1,0 +1,17 @@
+{
+  "name": "篮球训练管理",
+  "short_name": "训练管理",
+  "description": "篮球训练学员管理与训练记录App",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2F2F7",
+  "theme_color": "#F2F2F7",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

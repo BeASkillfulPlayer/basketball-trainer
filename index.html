@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="篮球训练管理">
+  <meta name="theme-color" content="#F2F2F7">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+  <title>篮球训练管理</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==================== 主容器 ==================== -->
+  <div id="app">
+
+    <!-- ====== 页面：首页（学员列表） ====== -->
+    <div id="page-home" class="page active">
+      <!-- 顶部导航栏 -->
+      <div class="nav-bar">
+        <div class="nav-title">学员管理</div>
+      </div>
+
+      <!-- 统计卡片 -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">学员总数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-today" style="color: #FF6B35;">0</div>
+          <div class="stat-label">今日上课</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-hours" style="color: #007AFF;">0</div>
+          <div class="stat-label">剩余课时</div>
+        </div>
+      </div>
+
+      <!-- 学员列表 -->
+      <div class="list-section">
+        <div class="section-header">
+          <span class="section-title">学员列表</span>
+          <span class="section-count" id="student-count">共 0 人</span>
+        </div>
+
+        <div id="student-list" class="student-list">
+          <!-- 动态生成 -->
+        </div>
+
+        <!-- 空状态 -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">🏀</div>
+          <div class="empty-title">还没有学员</div>
+          <div class="empty-desc">点击底部「添加」按钮<br>添加你的第一个学员吧</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 页面：添加学员 ====== -->
+    <div id="page-add" class="page">
+      <div class="nav-bar">
+        <div class="nav-back" onclick="goBack()" id="add-back-btn" style="display:none;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg>
+        </div>
+        <div class="nav-title" id="add-title">添加学员</div>
+        <div class="nav-placeholder"></div>
+      </div>
+
+      <div class="page-content">
+        <div class="form-card">
+          <div class="form-group">
+            <label class="form-label">姓名 <span class="required">*</span></label>
+            <input type="text" class="form-input" id="input-name" placeholder="请输入学员姓名">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">联系电话</label>
+            <input type="tel" class="form-input" id="input-phone" placeholder="请输入手机号" maxlength="11">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">年龄</label>
+            <input type="number" class="form-input" id="input-age" placeholder="请输入年龄" min="1" max="99">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">性别</label>
+            <div class="segmented-control" id="gender-picker">
+              <button class="seg-btn active" data-value="男">👦 男</button>
+              <button class="seg-btn" data-value="女">👧 女</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">总课时 <span class="required">*</span></label>
+            <input type="number" class="form-input" id="input-hours" placeholder="请输入购买的课时数" min="1">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">入学日期</label>
+            <input type="date" class="form-input" id="input-date">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">备注</label>
+            <textarea class="form-textarea" id="input-notes" placeholder="可填写学员的水平、特点等备注信息" rows="3"></textarea>
+          </div>
+
+          <button class="btn-primary" id="btn-save" onclick="saveStudent()">添加学员</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 页面：学员详情 ====== -->
+    <div id="page-detail" class="page">
+      <div class="nav-bar">
+        <div class="nav-back" onclick="goBack()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg>
+        </div>
+        <div class="nav-title" id="detail-name">学员详情</div>
+        <div class="nav-placeholder"></div>
+      </div>
+
+      <div class="page-content">
+        <!-- 学员信息 -->
+        <div class="profile-card">
+          <div class="profile-top">
+            <div class="avatar" id="detail-avatar">?</div>
+            <div class="profile-info">
+              <div class="profile-name" id="detail-info-name"></div>
+              <div class="profile-meta" id="detail-info-meta"></div>
+              <div class="profile-date" id="detail-info-date"></div>
+            </div>
+            <button class="btn-edit" onclick="editStudent()">编辑</button>
+          </div>
+          <div class="profile-notes" id="detail-notes" style="display:none;"></div>
+        </div>
+
+        <!-- 课时情况 -->
+        <div class="hours-card">
+          <div class="hours-title">课时情况</div>
+          <div class="hours-row">
+            <div class="hours-item">
+              <div class="hours-val" id="detail-total">0</div>
+              <div class="hours-lbl">总课时</div>
+            </div>
+            <div class="hours-divider"></div>
+            <div class="hours-item">
+              <div class="hours-val" id="detail-used" style="color:#007AFF;">0</div>
+              <div class="hours-lbl">已用课时</div>
+            </div>
+            <div class="hours-divider"></div>
+            <div class="hours-item">
+              <div class="hours-val" id="detail-remain" style="color:#FF6B35;">0</div>
+              <div class="hours-lbl">剩余课时</div>
+            </div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="detail-progress"></div>
+          </div>
+          <div class="progress-text" id="detail-progress-text">已使用 0%</div>
+        </div>
+
+        <!-- 开始训练按钮 -->
+        <button class="btn-primary btn-large" onclick="startTraining()">🏀 开始训练</button>
+
+        <!-- 训练历史 -->
+        <div class="section-header">
+          <span class="section-title">训练记录</span>
+          <span class="section-count" id="record-count">共 0 次</span>
+        </div>
+
+        <div id="record-list" class="record-list">
+          <!-- 动态生成 -->
+        </div>
+
+        <div id="record-empty" class="empty-state" style="padding:60px 0;">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">还没有训练记录</div>
+          <div class="empty-desc">点击上方「开始训练」<br>记录第一堂课吧</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 页面：训练记录（清单勾选） ====== -->
+    <div id="page-training" class="page">
+      <div class="nav-bar">
+        <div class="nav-back" onclick="goBack()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg>
+        </div>
+        <div class="nav-title">训练记录</div>
+        <div class="nav-placeholder"></div>
+      </div>
+
+      <div class="page-content">
+        <!-- 训练信息 -->
+        <div class="form-card">
+          <div class="training-header-title" id="training-student-name">🏀 训练课</div>
+
+          <div class="form-row">
+            <span class="form-label">训练日期</span>
+            <input type="date" class="form-input flex-1" id="training-date">
+          </div>
+
+          <div class="form-row">
+            <span class="form-label">训练时长</span>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="changeDuration(-1)">−</button>
+              <input type="number" class="stepper-input" id="training-duration" value="1" min="1">
+              <span class="stepper-unit">课时</span>
+              <button class="stepper-btn" onclick="changeDuration(1)">＋</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 训练项目清单 -->
+        <div class="section-header">
+          <span class="section-title">训练项目清单</span>
+          <span class="section-count" id="check-count">勾选 0 / 8</span>
+        </div>
+
+        <div class="form-card" id="checklist-container">
+          <!-- 动态生成 -->
+        </div>
+
+        <!-- 添加自定义项目 -->
+        <div class="add-custom-row" id="add-custom-row">
+          <button class="btn-add-custom" onclick="showCustomInput()">＋ 添加自定义训练项目</button>
+        </div>
+        <div class="custom-input-row" id="custom-input-row" style="display:none;">
+          <input type="text" class="form-input" id="custom-input" placeholder="输入训练项目名称">
+          <button class="btn-primary btn-sm" onclick="confirmCustom()">添加</button>
+          <button class="btn-cancel btn-sm" onclick="cancelCustom()">取消</button>
+        </div>
+
+        <!-- 训练备注 -->
+        <div class="form-card" style="margin-top:12px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">训练备注</label>
+            <textarea class="form-textarea" id="training-notes" placeholder="记录本次训练的表现、问题等..." rows="2"></textarea>
+          </div>
+        </div>
+
+        <!-- 保存 -->
+        <button class="btn-primary btn-large" onclick="saveTrainingRecord()" style="margin-top:24px;">
+          ✅ 完成训练，保存记录
+        </button>
+      </div>
+    </div>
+
+    <!-- ====== 底部标签栏 ====== -->
+    <div id="tab-bar" class="tab-bar">
+      <button class="tab-btn active" data-page="home" onclick="switchTab('home')">
+        <span class="tab-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <span class="tab-text">学员</span>
+      </button>
+      <button class="tab-btn" data-page="add" onclick="switchTab('add')">
+        <span class="tab-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </span>
+        <span class="tab-text">添加</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ====== Toast 提示 ====== -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ====== 删除确认弹窗 ====== -->
+  <div id="modal-overlay" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title">确认删除</div>
+      <div class="modal-body" id="modal-body">确定要删除吗？此操作不可恢复。</div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">取消</button>
+        <button class="btn-danger" id="modal-confirm-btn" onclick="">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // 注册 Service Worker（离线支持）
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function() {
+        console.log('SW 注册成功');
+      }).catch(function(err) {
+        console.log('SW 注册失败:', err);
+      });
+    }
+  </script>
+</body>
+</html>
