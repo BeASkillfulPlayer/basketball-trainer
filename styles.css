@@ -969,3 +969,97 @@ input::placeholder, textarea::placeholder { color: var(--text-placeholder); }
 .modal-body { font-size: var(--font-subhead); color: var(--text-secondary); margin-bottom: 22px; line-height: 1.5; }
 .modal-actions { display: flex; gap: 12px; }
 .modal-actions button { flex: 1; height: 46px; border-radius: var(--r-md); font-size: var(--font-headline); font-weight: 500; }
+
+/* ==================== Secondary Button ==================== */
+.btn-secondary {
+  height: 44px; background: var(--bg-elevated); color: var(--blue);
+  border-radius: var(--r-md); font-size: var(--font-subhead); font-weight: 500;
+  cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.15s;
+  border: 1px solid rgba(0,122,255,0.15);
+}
+.btn-secondary:active { background: rgba(0,122,255,0.05); }
+
+/* ==================== Today Schedule ==================== */
+.schedule-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; background: var(--bg-elevated); border-radius: var(--r-sm);
+  margin-bottom: 4px; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform 0.1s;
+}
+.schedule-item:active { transform: scale(0.98); }
+.sched-time { font-size: var(--font-footnote); font-weight: 600; color: var(--blue); width: 42px; flex-shrink: 0; }
+.sched-student { flex: 1; font-size: var(--font-subhead); font-weight: 500; }
+.sched-note { font-size: var(--font-caption1); color: var(--text-secondary); }
+
+/* ==================== Calendar ==================== */
+.cal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0 16px;
+}
+.cal-nav-btn {
+  width: 40px; height: 40px; border-radius: 50%; font-size: 24px; color: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.cal-nav-btn:active { background: rgba(0,122,255,0.1); }
+.cal-month-label { font-size: var(--font-title3); font-weight: 600; letter-spacing: -0.01em; }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 16px; }
+.cal-day-header { text-align: center; font-size: var(--font-caption1); color: var(--text-secondary); padding: 8px 0; font-weight: 500; }
+.cal-day {
+  text-align: center; padding: 10px 0; border-radius: var(--r-sm); cursor: pointer;
+  font-size: var(--font-subhead); font-weight: 500; transition: all 0.15s; position: relative;
+}
+.cal-day.empty { cursor: default; }
+.cal-day:not(.empty):active { background: var(--bg-pressed); }
+.cal-day.today { color: var(--blue); font-weight: 700; }
+.cal-day.selected { background: var(--blue); color: #FFF; border-radius: 50%; }
+.cal-day.has-class::after {
+  content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%; background: var(--orange);
+}
+.cal-day.selected.has-class::after { background: #FFF; }
+
+.day-schedule-list { padding-bottom: 20px; }
+.day-empty { text-align: center; color: var(--text-tertiary); padding: 30px 0; font-size: var(--font-subhead); }
+.day-sched-item {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  background: var(--bg-elevated); border-radius: var(--r-sm); margin-bottom: 6px; box-shadow: var(--shadow-sm);
+}
+.day-sched-time { font-weight: 600; color: var(--blue); font-size: var(--font-subhead); width: 48px; }
+.day-sched-name { flex: 1; font-size: var(--font-subhead); font-weight: 500; }
+.day-sched-note { font-size: var(--font-caption1); color: var(--text-secondary); }
+.day-sched-del { font-size: 16px; color: var(--text-tertiary); cursor: pointer; padding: 4px; }
+.day-sched-del:active { color: var(--red); }
+
+/* ==================== Report Page ==================== */
+.report-card {
+  background: var(--bg-elevated); border-radius: var(--r-xl); padding: 24px 20px; box-shadow: var(--shadow-sm);
+}
+.report-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.report-header-info { flex: 1; }
+.report-name { font-size: var(--font-title2); font-weight: 700; letter-spacing: -0.01em; }
+.report-meta { font-size: var(--font-subhead); color: var(--text-secondary); margin-top: 3px; }
+.report-stats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.report-stat-item {
+  flex: 1; min-width: calc(50% - 4px); text-align: center; padding: 12px 8px;
+  background: var(--bg-input); border-radius: var(--r-md);
+}
+.report-stat-val { font-size: var(--font-footnote); font-weight: 600; }
+.report-section { margin-bottom: 16px; }
+.report-section-title { font-size: var(--font-subhead); font-weight: 600; margin-bottom: 8px; }
+.report-record { font-size: var(--font-footnote); color: var(--text-secondary); padding: 3px 0; }
+.report-footer { text-align: center; padding-top: 16px; border-top: 0.5px solid var(--separator); font-size: var(--font-caption1); color: var(--text-tertiary); }
+
+/* ==================== Stats Page ==================== */
+.stats-overview-card {
+  background: var(--bg-elevated); border-radius: var(--r-lg); padding: 16px 18px;
+  margin-bottom: 16px; box-shadow: var(--shadow-sm); font-size: var(--font-footnote); color: var(--text-secondary); text-align: center;
+}
+.stats-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.stats-bar-label { font-size: var(--font-caption1); color: var(--text-secondary); width: 36px; flex-shrink: 0; }
+.stats-bar-count { font-size: var(--font-caption1); color: var(--text-secondary); width: 36px; text-align: right; flex-shrink: 0; }
+.stats-bar { flex: 1; height: 6px; background: #E8E8ED; border-radius: 3px; overflow: hidden; }
+.stats-bar-fill { height: 100%; background: var(--orange); border-radius: 3px; transition: width 0.5s ease; }
+
+/* ==================== Init Modal Listener ==================== */
+#schedule-modal .modal-overlay { z-index: 310; }

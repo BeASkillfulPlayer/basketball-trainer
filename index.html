@@ -71,6 +71,12 @@
         <div id="alerts-list" class="alerts-list"></div>
       </div>
 
+      <!-- 今日课程 -->
+      <div id="today-schedule-section" style="display:none;padding:0 16px 12px;">
+        <div class="section-title-sm">📅 今日课程</div>
+        <div id="today-schedule-list"></div>
+      </div>
+
       <!-- 搜索 + 分组 -->
       <div class="search-row">
         <input type="text" class="search-input" id="search-input" placeholder="🔍 搜索学员姓名或手机号..." oninput="onSearchInput(event)">
@@ -182,6 +188,12 @@
       <!-- 开始训练 -->
       <button class="btn-primary btn-large" onclick="startTraining()">🏀 开始训练</button>
 
+      <!-- 排课 + 报告 -->
+      <div style="display:flex;gap:10px;margin:0 0 16px;">
+        <button class="btn-secondary" onclick="showAddSchedule()" style="flex:1;">📅 排课</button>
+        <button class="btn-secondary" onclick="navigateTo('report',{studentId:currentDetailId})" style="flex:1;">📝 报告</button>
+      </div>
+
       <!-- 训练记录 -->
       <div class="section-header">
         <span class="section-title">训练记录</span>
@@ -250,6 +262,9 @@
       <div class="settings-stats-card"><span id="settings-stats"></span></div>
 
       <div class="settings-menu">
+        <div class="settings-menu-item" onclick="navigateTo('stats')"><span>📊 数据统计</span><span class="settings-arrow">›</span></div>
+        <div class="settings-menu-item" onclick="exportCSV()"><span>📥 导出数据 (CSV)</span><span class="settings-arrow">›</span></div>
+        <div class="settings-menu-item" onclick="navigateTo('schedule')"><span>📅 课程日历</span><span class="settings-arrow">›</span></div>
         <div class="settings-menu-item" onclick="logoutTrainer()"><span>🚪 切换账号</span><span class="settings-arrow">›</span></div>
       </div>
 
@@ -306,6 +321,96 @@
     <div class="modal-actions" style="margin-top:16px;">
       <button class="btn-cancel" onclick="closePaymentModal()">取消</button>
       <button class="btn-primary" onclick="confirmPayment()" style="background:#34C759;">确认缴费</button>
+    </div>
+  </div>
+</div>
+
+<!-- 排课弹窗 -->
+<div id="schedule-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:340px;">
+    <div class="modal-title">📅 安排课程</div>
+    <div class="modal-body" id="sched-modal-student"></div>
+    <input type="date" class="form-input" id="sched-modal-date">
+    <input type="time" class="form-input" id="sched-modal-time" placeholder="选择时间" style="margin-top:8px;">
+    <textarea class="form-textarea" id="sched-modal-note" placeholder="备注（选填）" rows="1" style="margin-top:8px;"></textarea>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-cancel" onclick="closeScheduleModal()">取消</button>
+      <button class="btn-primary" onclick="confirmSchedule()">确认排课</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 课程日历页 ====== -->
+<div id="page-schedule" class="page">
+  <div class="nav-bar">
+    <div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div>
+    <div class="nav-title">课程日历</div>
+    <div class="nav-placeholder"></div>
+  </div>
+  <div class="page-content">
+    <div class="cal-header">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+      <span class="cal-month-label" id="sched-month-label"></span>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="section-header"><span class="section-title" id="day-schedule-date">--</span></div>
+    <div id="day-schedule-list" class="day-schedule-list"></div>
+  </div>
+</div>
+
+<!-- ====== 学员报告页 ====== -->
+<div id="page-report" class="page">
+  <div class="nav-bar">
+    <div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div>
+    <div class="nav-title">训练报告</div>
+    <button class="btn-edit" onclick="shareReport()" style="margin-right:8px;">📤 分享</button>
+  </div>
+  <div class="page-content">
+    <div class="report-card">
+      <div class="report-header">
+        <div class="avatar" id="report-avatar" style="width:56px;height:56px;font-size:22px;">?</div>
+        <div class="report-header-info">
+          <div class="report-name" id="report-name"></div>
+          <div class="report-meta" id="report-meta"></div>
+        </div>
+      </div>
+      <div class="report-stats">
+        <div class="report-stat-item"><span class="report-stat-val" id="report-hours">--</span></div>
+        <div class="report-stat-item"><span class="report-stat-val" id="report-progress">--</span></div>
+        <div class="report-stat-item"><span class="report-stat-val" id="report-paid">--</span></div>
+        <div class="report-stat-item"><span class="report-stat-val" id="report-trainings">--</span></div>
+      </div>
+      <div class="report-section"><div class="report-section-title">📋 最近训练</div><div id="report-recent"></div></div>
+      <div class="report-section"><div class="report-section-title">⭐ 熟练掌握（3次以上）</div><div id="report-mastered" class="record-tags" style="padding:0;"></div></div>
+      <div class="report-footer">
+        <span id="report-start-date"></span> · <span id="report-gen-date"></span>
+        <div style="margin-top:4px;font-size:11px;color:#CCC;">BASP 篮球训练管理平台</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 数据统计页 ====== -->
+<div id="page-stats" class="page">
+  <div class="nav-bar">
+    <div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div>
+    <div class="nav-title">数据统计</div>
+    <button class="btn-edit" onclick="exportCSV()" style="margin-right:8px;">📥 导出</button>
+  </div>
+  <div class="page-content">
+    <div class="stats-overview-card" id="stats-overview"></div>
+    <div class="form-card" style="margin-bottom:14px;">
+      <div class="section-title-sm" style="padding:14px 0 4px;">学员分布</div>
+      <div id="stats-group-chart" style="padding-bottom:12px;"></div>
+    </div>
+    <div class="form-card" style="margin-bottom:14px;">
+      <div class="section-title-sm" style="padding:14px 0 4px;">训练频率（星期分布）</div>
+      <div id="stats-week-chart" style="padding-bottom:12px;"></div>
+    </div>
+    <div class="form-card">
+      <div class="section-title-sm" style="padding:14px 0 4px;">课时消耗趋势（近6个月）</div>
+      <div id="stats-month-chart" style="padding-bottom:12px;"></div>
     </div>
   </div>
 </div>

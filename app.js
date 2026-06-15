@@ -180,6 +180,9 @@ function navigateTo(pageId, data) {
   if (pageId === 'detail' && data) renderDetail(data.id);
   if (pageId === 'progress' && data) renderProgressTree(data.studentId);
   if (pageId === 'training' && data) initTraining(data.studentId);
+  if (pageId === 'report' && data) renderReport(data.studentId);
+  if (pageId === 'schedule') renderSchedule();
+  if (pageId === 'stats') renderStats();
   if (pageId === 'home') renderHome();
 }
 
@@ -345,6 +348,21 @@ function renderHome() {
     `).join('');
   } else {
     alertSection.style.display = 'none';
+  }
+
+  // 今日课程
+  const schedule = DB.getSchedule();
+  const todaySchedule = schedule.filter(s => s.date === today).sort((a,b) => (a.time||'').localeCompare(b.time||''));
+  const schedSection = document.getElementById('today-schedule-section');
+  const schedList = document.getElementById('today-schedule-list');
+  if (todaySchedule.length > 0) {
+    schedSection.style.display = 'block';
+    schedList.innerHTML = todaySchedule.map(sc => {
+      const st = students.find(s => s.id === sc.studentId);
+      return `<div class="schedule-item" onclick="openDetail('${sc.studentId}')"><span class="sched-time">${sc.time||'--:--'}</span><span class="sched-student">${st?escHtml(st.name):'未知'}</span><span class="sched-note">${escHtml(sc.notes||'')}</span></div>`;
+    }).join('');
+  } else {
+    schedSection.style.display = 'none';
   }
 
   // 分组标签
@@ -816,6 +834,259 @@ function saveTrainingRecord() {
   showToast('保存成功！'); setTimeout(()=>goBack(),800);
 }
 
+// ==================== 排课系统 ====================
+
+let scheduleDate = todayStr();
+
+function renderSchedule() {
+  scheduleDate = todayStr();
+  document.getElementById('sched-month-label').textContent = formatMonth(scheduleDate);
+  renderCalendarDays();
+  renderDaySchedule();
+}
+
+function formatMonth(dateStr) {
+  const [y,m] = dateStr.split('-');
+  return y + '年' + parseInt(m) + '月';
+}
+
+function changeMonth(delta) {
+  const [y,m,d] = scheduleDate.split('-').map(Number);
+  const dt = new Date(y, m-1 + delta, 1);
+  scheduleDate = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-01';
+  document.getElementById('sched-month-label').textContent = formatMonth(scheduleDate);
+  renderCalendarDays();
+}
+
+function renderCalendarDays() {
+  const [y,m] = scheduleDate.split('-').map(Number);
+  const firstDay = new Date(y, m-1, 1).getDay();
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const schedule = DB.getSchedule();
+  const today = todayStr();
+
+  let html = '';
+  // Day headers
+  ['日','一','二','三','四','五','六'].forEach(d => html += '<div class="cal-day-header">'+d+'</div>');
+
+  // Empty cells before first day
+  for (let i=0; i<firstDay; i++) html += '<div class="cal-day empty"></div>';
+
+  // Days
+  for (let d=1; d<=daysInMonth; d++) {
+    const ds = y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const hasClass = schedule.some(s => s.date === ds);
+    const isToday = ds === today;
+    const isSelected = ds === scheduleDate;
+    html += '<div class="cal-day'+(hasClass?' has-class':'')+(isToday?' today':'')+(isSelected?' selected':'')+'" onclick="selectCalDay(\''+ds+'\')">'+d+'</div>';
+  }
+
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function selectCalDay(dateStr) {
+  scheduleDate = dateStr;
+  renderCalendarDays();
+  renderDaySchedule();
+}
+
+function renderDaySchedule() {
+  const schedule = DB.getSchedule();
+  const students = DB.getStudents();
+  const daySchedule = schedule.filter(s => s.date === scheduleDate).sort((a,b) => (a.time||'').localeCompare(b.time||''));
+  const listEl = document.getElementById('day-schedule-list');
+  document.getElementById('day-schedule-date').textContent = scheduleDate;
+
+  if (daySchedule.length === 0) {
+    listEl.innerHTML = '<div class="day-empty">当天没有排课</div>';
+  } else {
+    listEl.innerHTML = daySchedule.map(sc => {
+      const st = students.find(s => s.id === sc.studentId);
+      return '<div class="day-sched-item"><span class="day-sched-time">'+(sc.time||'--:--')+'</span><span class="day-sched-name">'+(st?escHtml(st.name):'未知')+'</span><span class="day-sched-note">'+escHtml(sc.notes||'')+'</span><span class="day-sched-del" onclick="deleteSchedule(event,\''+sc.id+'\')">✕</span></div>';
+    }).join('');
+  }
+}
+
+function showAddSchedule() {
+  const student = DB.getStudents().find(s => s.id === currentDetailId);
+  if (!student) return;
+  document.getElementById('sched-modal-student').textContent = '为 ' + student.name + ' 排课';
+  document.getElementById('sched-modal-date').value = todayStr();
+  document.getElementById('sched-modal-time').value = '';
+  document.getElementById('sched-modal-note').value = '';
+  document.getElementById('schedule-modal').style.display = 'flex';
+}
+
+function confirmSchedule() {
+  const date = document.getElementById('sched-modal-date').value || todayStr();
+  const time = document.getElementById('sched-modal-time').value;
+  const notes = document.getElementById('sched-modal-note').value.trim();
+  if (!time) { showToast('请选择时间'); return; }
+  const sched = DB.getSchedule();
+  sched.push({ id: genId(), studentId: currentDetailId, date, time, notes, createTime: new Date().toISOString() });
+  DB.saveSchedule(sched);
+  closeScheduleModal();
+  showToast('排课成功');
+  renderDetail(currentDetailId);
+}
+
+function deleteSchedule(event, id) {
+  event.stopPropagation();
+  if (!confirm('确定删除这节排课吗？')) return;
+  const sched = DB.getSchedule().filter(s => s.id !== id);
+  DB.saveSchedule(sched);
+  renderDaySchedule();
+  showToast('已删除');
+}
+
+function closeScheduleModal() { document.getElementById('schedule-modal').style.display = 'none'; }
+
+// ==================== 报告系统 ====================
+
+function renderReport(studentId) {
+  const student = DB.getStudents().find(s => s.id === studentId);
+  if (!student) { goBack(); return; }
+  const curriculum = DB.getCurriculum();
+  const progress = DB.getStudentProgress(studentId);
+  const records = DB.getRecords().filter(r => r.studentId === studentId).sort((a,b) => b.date.localeCompare(a.date));
+  const payments = DB.getStudentPayments(studentId);
+  const totalPaid = payments.reduce((s,p) => s + p.amount, 0);
+  const totalItems = countLeafItems(curriculum);
+  const completed = countCompletedItems(curriculum, progress);
+  const pct = totalItems > 0 ? Math.round(completed / totalItems * 100) : 0;
+
+  document.getElementById('report-name').textContent = student.name;
+  document.getElementById('report-meta').textContent = (student.age||'--')+'岁 | '+(student.gender||'')+' | '+(student.group||'未分组');
+  document.getElementById('report-hours').textContent = student.totalHours + ' 总课时 / ' + student.remainingHours + ' 剩余';
+  document.getElementById('report-progress').textContent = '训练进度: ' + pct + '% (' + completed + '/' + totalItems + ')';
+  document.getElementById('report-paid').textContent = '累计缴费: ¥' + totalPaid;
+  document.getElementById('report-trainings').textContent = '累计训练: ' + records.length + ' 次';
+
+  // 最近训练
+  document.getElementById('report-recent').innerHTML = records.slice(0, 5).map(r =>
+    '<div class="report-record">📅 '+r.date+' ⏱ '+r.duration+'课时 '+(r.checkedItems||[]).slice(0,3).map(i=>'#'+i).join(' ')+'</div>'
+  ).join('') || '<div class="report-record">暂无训练记录</div>';
+
+  // 已掌握技能（完成3次以上的项目）
+  const mastered = [];
+  function findMastered(nodes) {
+    nodes.forEach(n => {
+      if (n.children && n.children.length > 0) findMastered(n.children);
+      else if (progress[n.id] && progress[n.id].count >= 3) mastered.push(n.name);
+    });
+  }
+  findMastered(curriculum);
+  document.getElementById('report-mastered').innerHTML = mastered.length > 0
+    ? mastered.slice(0, 20).map(m => '<span class="tag">✅ '+escHtml(m)+'</span>').join('')
+    : '<span style="color:#999;">暂无（完成3次以上训练会显示）</span>';
+
+  // 入学日期
+  document.getElementById('report-start-date').textContent = '入学: ' + (student.startDate || '--');
+  document.getElementById('report-gen-date').textContent = '报告生成: ' + todayStr();
+}
+
+function shareReport() {
+  const student = DB.getStudents().find(s => s.id === currentDetailId);
+  if (!student) return;
+  const curriculum = DB.getCurriculum();
+  const progress = DB.getStudentProgress(currentDetailId);
+  const records = DB.getRecords().filter(r => r.studentId === currentDetailId);
+  const totalItems = countLeafItems(curriculum);
+  const completed = countCompletedItems(curriculum, progress);
+  const pct = totalItems > 0 ? Math.round(completed / totalItems * 100) : 0;
+
+  const text = '🏀 '+student.name+' 训练报告\n'+
+    '进度: '+pct+'% ('+completed+'/'+totalItems+')\n'+
+    '训练: '+records.length+'次 | 剩余: '+student.remainingHours+'课时\n'+
+    '—— BASP篮球训练管理平台';
+
+  if (navigator.share) {
+    navigator.share({ title: student.name+' 训练报告', text: text }).catch(() => {});
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard?.writeText(text).then(() => showToast('已复制到剪贴板')).catch(() => showToast('分享功能不可用'));
+  }
+}
+
+// ==================== 统计系统 ====================
+
+function renderStats() {
+  const students = DB.getStudents();
+  const records = DB.getRecords();
+  const payments = DB.getPayments();
+  const curriculum = DB.getCurriculum();
+  const progress = DB.getProgress();
+  const totalItems = countLeafItems(curriculum);
+
+  // 学员分布（分组）
+  const groupCounts = {};
+  students.forEach(s => { const g = s.group || '未分组'; groupCounts[g] = (groupCounts[g]||0) + 1; });
+
+  document.getElementById('stats-group-chart').innerHTML = Object.entries(groupCounts).map(([g,c]) =>
+    '<div class="stats-bar-row"><span class="stats-bar-label">'+escHtml(g)+'</span><span class="stats-bar-count">'+c+'人</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(c/students.length*100)+'%"></div></div></div>'
+  ).join('') || '<div style="color:#999;text-align:center;padding:20px;">暂无数据</div>';
+
+  // 训练频率（每周哪几天）
+  const dayCounts = [0,0,0,0,0,0,0];
+  const dayNames = ['日','一','二','三','四','五','六'];
+  records.forEach(r => { const d = new Date(r.date).getDay(); dayCounts[d]++; });
+  const maxDay = Math.max(1, ...dayCounts);
+
+  document.getElementById('stats-week-chart').innerHTML = dayNames.map((dn,i) =>
+    '<div class="stats-bar-row"><span class="stats-bar-label">周'+dn+'</span><span class="stats-bar-count">'+dayCounts[i]+'次</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(dayCounts[i]/maxDay*100)+'%;background:#007AFF;"></div></div></div>'
+  ).join('');
+
+  // 课时消耗趋势（近6个月）
+  const months = [];
+  for (let i=5; i>=0; i--) {
+    const d = new Date(); d.setMonth(d.getMonth()-i);
+    months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+  }
+  const monthHours = {};
+  months.forEach(m => monthHours[m]=0);
+  records.forEach(r => { const m = r.date.slice(0,7); if (monthHours[m] !== undefined) monthHours[m] += r.duration; });
+
+  document.getElementById('stats-month-chart').innerHTML = months.map(m =>
+    '<div class="stats-bar-row"><span class="stats-bar-label">'+m+'</span><span class="stats-bar-count">'+monthHours[m]+'课时</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(monthHours[m]/Math.max(1,...Object.values(monthHours))*100)+'%;background:#34C759;"></div></div></div>'
+  ).join('');
+
+  // 全局概览
+  document.getElementById('stats-overview').textContent =
+    students.length+'学员 | '+records.length+'条记录 | ¥'+payments.reduce((s,p)=>s+p.amount,0)+'总收入 | '+
+    Math.round(Object.values(progress).reduce((s,p)=>{const c=countCompletedItems(curriculum,p);return s+(c/totalItems*100);},0)/Math.max(1,students.length))+'% 平均进度';
+}
+
+function exportCSV() {
+  const students = DB.getStudents();
+  const records = DB.getRecords();
+  const payments = DB.getPayments();
+
+  let csv = '学员姓名,电话,年龄,性别,分组,总课时,剩余课时,入学日期,备注\n';
+  students.forEach(s => {
+    csv += [s.name,s.phone,s.age,s.gender,s.group,s.totalHours,s.remainingHours,s.startDate,s.notes].map(v=>'"'+(v||'')+'"').join(',') + '\n';
+  });
+
+  csv += '\n\n训练记录\n日期,学员,课时,训练项目,备注\n';
+  records.forEach(r => {
+    const st = students.find(s=>s.id===r.studentId);
+    csv += [r.date,st?st.name:'',r.duration,(r.checkedItems||[]).join('/'),r.notes].map(v=>'"'+(v||'')+'"').join(',') + '\n';
+  });
+
+  csv += '\n\n缴费记录\n日期,学员,套餐,金额,增加课时,备注\n';
+  payments.forEach(p => {
+    const st = students.find(s=>s.id===p.studentId);
+    csv += [p.date,st?st.name:'',p.packageName,p.amount,p.hoursAdded,p.notes].map(v=>'"'+(v||'')+'"').join(',') + '\n';
+  });
+
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '篮球训练数据_' + todayStr() + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('导出成功');
+}
+
 // ==================== 设置页 ====================
 
 function renderSettings() {
@@ -866,4 +1137,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // 弹窗关闭
   document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
   document.getElementById('payment-modal').addEventListener('click', function(e) { if (e.target === this) closePaymentModal(); });
+  document.getElementById('schedule-modal').addEventListener('click', function(e) { if (e.target === this) closeScheduleModal(); });
 });
