@@ -6,226 +6,194 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BASP">
-  <meta name="theme-color" content="#0A0A0C">
+  <meta name="theme-color" content="#0C0C0E">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon.png">
-  <title>BASP 训练管理</title>
+  <title>BASP</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <div id="app">
 
   <!-- Login -->
   <div id="page-login" class="page active">
-    <div class="login-container">
+    <div class="login-wrap">
       <div class="login-logo">BASP</div>
       <div class="login-title">篮球训练管理</div>
-      <div class="login-subtitle">Be A Skillful Player</div>
-      <div class="login-section-title">选择教练</div>
+      <div class="login-sub">Be A Skillful Player</div>
+      <div class="login-label">选择教练</div>
       <div id="trainer-list" class="trainer-list"></div>
-      <button class="btn-primary" onclick="showRegister()" style="margin-top:16px;background:#34C759;">注册新教练</button>
+      <button class="btn btn-primary" onclick="showRegister()" style="margin-top:14px;background:#30D158;">注册新教练</button>
     </div>
   </div>
 
   <!-- Register -->
   <div id="page-register" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="backToLogin()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">注册教练</div><div class="nav-placeholder"></div></div>
-    <div class="page-content"><div class="form-card">
-      <div class="form-group"><label class="form-label">姓名<span class="required">*</span></label><input type="text" class="form-input" id="reg-name" placeholder="请输入你的姓名"></div>
+    <div class="nav-bar"><div class="nav-back" onclick="backToLogin()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">注册</div><div class="nav-placeholder"></div></div>
+    <div class="page-content"><div class="card">
+      <div class="form-group"><label class="form-label">姓名<span class="form-req">*</span></label><input type="text" class="form-input" id="reg-name" placeholder="你的姓名"></div>
       <div class="form-group"><label class="form-label">手机号</label><input type="tel" class="form-input" id="reg-phone" placeholder="选填"></div>
       <div class="form-group"><label class="form-label">密码</label><input type="password" class="form-input" id="reg-password" placeholder="选填"></div>
-      <button class="btn-primary" onclick="registerTrainer()" style="margin-top:16px;">完成注册</button>
+      <button class="btn btn-primary" onclick="registerTrainer()" style="margin-top:12px;">完成注册</button>
     </div></div>
   </div>
 
   <!-- Dashboard -->
   <div id="page-dashboard" class="page">
-    <div class="page-content" style="padding-top:30px;text-align:center;">
-      <!-- 头像居中 -->
-      <div class="dash-avatar-wrap" onclick="navigateTo('profile')">
-        <div class="dash-avatar-lg" id="dash-avatar-lg">?</div>
+    <div class="page-content" style="padding-top:0;">
+      <div class="dash-hero">
+        <div class="dash-avatar" id="dash-avatar" onclick="navigateTo('profile')">?</div>
+        <div class="dash-name" id="dash-name">教练</div>
+        <div class="dash-sub" id="dash-date"></div>
       </div>
-      <div class="dash-trainer-name" id="dash-trainer-name">教练</div>
-
-      <!-- 4 大导航卡片 2x2 -->
       <div class="dash-grid">
-        <div class="dash-card card-enter" onclick="navigateTo('students')">
-          <div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <div class="dash-card-title">学员管理</div>
-          <div class="dash-card-stat" id="dash-students-stat">0 位学员</div>
-        </div>
-        <div class="dash-card card-enter" onclick="navigateTo('schedule-tab')">
-          <div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-          <div class="dash-card-title">课表安排</div>
-          <div class="dash-card-stat" id="dash-schedule-stat">今日 0 节课</div>
-        </div>
-        <div class="dash-card card-enter" onclick="navigateTo('finance')">
-          <div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <div class="dash-card-title">财务管理</div>
-          <div class="dash-card-stat" id="dash-finance-stat">本月 ¥0</div>
-        </div>
-        <div class="dash-card card-enter" onclick="navigateTo('journal')">
-          <div class="dash-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-          <div class="dash-card-title">训练纪要</div>
-          <div class="dash-card-stat" id="dash-journal-stat">0 条记录</div>
-        </div>
+        <div class="dash-card card-enter" onclick="navigateTo('students')"><svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div class="dash-card-title">学员管理</div><div class="dash-card-sub" id="dash-students-stat">0 位学员</div></div>
+        <div class="dash-card card-enter" onclick="navigateTo('schedule-tab')"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div class="dash-card-title">课表安排</div><div class="dash-card-sub" id="dash-schedule-stat">今日 0 节课</div></div>
+        <div class="dash-card card-enter" onclick="navigateTo('finance')"><svg viewBox="0 0 24 24" fill="none"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><div class="dash-card-title">财务管理</div><div class="dash-card-sub" id="dash-finance-stat">本月 0</div></div>
+        <div class="dash-card card-enter" onclick="navigateTo('journal')"><svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><div class="dash-card-title">训练纪要</div><div class="dash-card-sub" id="dash-journal-stat">0 条记录</div></div>
       </div>
-
-      <!-- 提醒 -->
-      <div id="dash-alerts-section" style="text-align:left;display:none;margin-top:16px;">
-        <div style="font-size:16px;font-weight:600;margin-bottom:8px;padding:0 4px;">提醒</div>
-        <div id="dash-alerts-list"></div>
-      </div>
-
-      <!-- 今日课程 -->
-      <div id="dash-schedule-section" style="text-align:left;display:none;margin-top:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:0 4px;"><span style="font-size:16px;font-weight:600;">今日课程</span><span class="dash-section-more" onclick="navigateTo('schedule-tab')">课表 &rsaquo;</span></div>
-        <div id="dash-schedule-list"></div>
-      </div>
+      <div id="dash-alerts-section" style="display:none;"><div class="dash-section-title">提醒</div><div id="dash-alerts-list" class="alert-row"></div></div>
+      <div id="dash-schedule-section" style="display:none;" class="dash-section"><div class="dash-section-title">今日课程</div><div id="dash-schedule-list" class="sched-row"></div></div>
     </div>
   </div>
 
   <!-- Profile -->
   <div id="page-profile" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">我的</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">我的</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
-      <input type="file" accept="image/*" id="avatar-file-input" style="display:none;" onchange="uploadAvatar(event)">
-      <div class="profile-header">
-        <div class="profile-avatar-lg" id="prof-avatar" onclick="document.getElementById('avatar-file-input').click()">?</div>
-        <div class="profile-name-lg" id="prof-name"></div>
-        <div class="profile-phone-lg" id="prof-phone"></div>
-        <div class="profile-bio" id="prof-bio">点击编辑添加个人简介...</div>
-        <button class="profile-edit-btn" onclick="editProfile()">编辑资料</button>
+      <input type="file" accept="image/*" id="avatar-file-input" style="display:none" onchange="uploadAvatar(event)">
+      <div class="prof-hero">
+        <div class="prof-avatar" id="prof-avatar" onclick="document.getElementById('avatar-file-input').click()">?</div>
+        <div class="prof-name" id="prof-name"></div>
+        <div class="prof-phone" id="prof-phone"></div>
+        <div class="prof-bio" id="prof-bio">点击编辑添加个人简介</div>
+        <span class="prof-edit" onclick="editProfile()">编辑资料</span>
       </div>
-      <div class="profile-stats-row">
-        <div class="profile-stat card-enter"><div class="profile-stat-val" id="prof-stat-students">0</div><div class="profile-stat-lbl">学员总数</div></div>
-        <div class="profile-stat card-enter"><div class="profile-stat-val" id="prof-stat-records">0</div><div class="profile-stat-lbl">训练次数</div></div>
-        <div class="profile-stat card-enter"><div class="profile-stat-val" id="prof-stat-income">0</div><div class="profile-stat-lbl">累计收入</div></div>
+      <div class="prof-stats">
+        <div class="prof-stat"><div class="prof-stat-val" id="prof-stat-students">0</div><div class="prof-stat-lbl">学员</div></div>
+        <div class="prof-stat"><div class="prof-stat-val" id="prof-stat-records">0</div><div class="prof-stat-lbl">训练</div></div>
+        <div class="prof-stat"><div class="prof-stat-val" id="prof-stat-income">0</div><div class="prof-stat-lbl">收入</div></div>
       </div>
-      <div class="profile-menu">
-        <div class="profile-menu-item" onclick="navigateTo('stats')"><span>数据统计</span><span class="profile-menu-arrow">›</span></div>
-        <div class="profile-menu-item" onclick="exportCSV()"><span>导出数据 (CSV)</span><span class="profile-menu-arrow">›</span></div>
-        <div class="profile-menu-item" onclick="logoutTrainer()"><span>切换账号</span><span class="profile-menu-arrow">›</span></div>
+      <div class="prof-menu">
+        <div class="prof-menu-item" onclick="navigateTo('stats')"><span>数据统计</span><span class="prof-menu-arrow">›</span></div>
+        <div class="prof-menu-item" onclick="exportCSV()"><span>导出数据 (CSV)</span><span class="prof-menu-arrow">›</span></div>
+        <div class="prof-menu-item" onclick="logoutTrainer()"><span>切换账号</span><span class="prof-menu-arrow">›</span></div>
       </div>
-      <div class="profile-about"><div class="profile-about-logo">BASP</div><div class="profile-about-title">篮球训练管理 v5.2</div><div class="profile-about-desc">Be A Skillful Player · 让训练更高效</div></div>
+      <div class="prof-about"><div class="prof-about-logo">BASP</div><div class="prof-about-title">v6.0</div><div class="prof-about-desc">Be A Skillful Player</div></div>
     </div>
   </div>
 
   <!-- Students -->
   <div id="page-students" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">学员管理</div><button class="btn-edit" onclick="resetAddForm();navigateTo('add');">+ 添加</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">学员管理</div><button class="btn btn-sm btn-ghost" onclick="resetAddForm();navigateTo('add');">+ 添加</button></div>
     <div class="page-content">
-      <div class="search-row" style="padding-left:0;padding-right:0;"><input type="text" class="search-input" id="students-search" placeholder="搜索学员..." oninput="onStudentsSearch(event)"></div>
-      <div class="group-tags-row" id="students-group-tags" style="padding-left:0;padding-right:0;"></div>
-      <div class="section-header"><span class="section-title">学员列表</span><span class="section-count" id="students-count">共 0 人</span></div>
+      <input type="text" class="search-box" id="students-search" placeholder="搜索学员..." oninput="onStudentsSearch(event)">
+      <div class="tag-row" id="students-group-tags"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;"><span style="font-size:15px;font-weight:600;">学员列表</span><span style="font-size:12px;color:var(--text-tertiary);" id="students-count">共 0 人</span></div>
       <div id="students-list" class="student-list"></div>
-      <div id="students-empty" class="empty-state" style="display:none;"><div class="empty-icon">+</div><div class="empty-title">还没有学员</div><div class="empty-desc">点击右上角添加你的第一个学员</div></div>
+      <div id="students-empty" class="empty-state" style="display:none;"><div class="empty-icon">+</div><div class="empty-title">还没有学员</div><div class="empty-desc">点击右上角添加</div></div>
     </div>
   </div>
 
   <!-- Detail -->
   <div id="page-detail" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="detail-name">学员详情</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="detail-name">学员详情</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
-      <div class="profile-card"><div class="profile-top"><div class="avatar" id="detail-avatar">?</div><div class="profile-info"><div class="profile-name" id="detail-info-name"></div><div class="profile-meta" id="detail-info-meta"></div><div class="profile-date" id="detail-info-date"></div></div><button class="btn-edit" onclick="editStudent()">编辑</button></div><div class="profile-notes" id="detail-notes" style="display:none;"></div><div class="profile-parent" id="detail-parent-info" style="display:none;"><span id="detail-parent-text"></span></div></div>
-      <div class="hours-card"><div class="hours-title">课时情况</div><div class="hours-row"><div class="hours-item"><div class="hours-val" id="detail-total">0</div><div class="hours-lbl">总课时</div></div><div class="hours-divider"></div><div class="hours-item"><div class="hours-val" id="detail-used" style="color:var(--red);">0</div><div class="hours-lbl">已用课时</div></div><div class="hours-divider"></div><div class="hours-item"><div class="hours-val" id="detail-remain" style="color:var(--red);">0</div><div class="hours-lbl">剩余课时</div></div></div><div class="progress-bar"><div class="progress-fill" id="detail-progress"></div></div><div class="progress-text" id="detail-progress-text">已使用 0%</div></div>
-      <div class="payment-section-card"><div class="payment-section-header"><span class="payment-section-title">缴费记录</span><span class="payment-total" id="total-paid">0</span><span class="payment-count-text" id="payment-count">共 0 笔</span></div><div id="payment-list" class="payment-list"></div><button class="btn-add-payment" onclick="showAddPayment()">+ 添加缴费</button></div>
-      <div class="progress-overview-card"><div class="progress-ov-header" onclick="openProgressPage(currentDetailId)"><span class="progress-ov-title">训练进程</span><span class="progress-ov-arrow">›</span></div><div class="progress-ov-bar-row"><span class="progress-ov-pct" id="progress-pct">完成 0%</span><span class="progress-ov-nums" id="progress-nums">0 / 0 项</span></div><div class="progress-bar" style="margin-bottom:10px;"><div class="progress-fill" id="progress-pct-bar"></div></div><div class="progress-cat-list" id="progress-cat-list"></div></div>
-      <button class="btn-primary btn-large" onclick="startTraining()">开始训练</button>
-      <div style="display:flex;gap:10px;margin:0 0 16px;"><button class="btn-secondary" onclick="showAddSchedule()" style="flex:1;">安排课程</button><button class="btn-secondary" onclick="navigateTo('report',{studentId:currentDetailId})" style="flex:1;">训练报告</button></div>
-      <div class="section-header"><span class="section-title">训练记录</span><span class="section-count" id="record-count">共 0 次</span></div>
+      <div class="profile-card"><div class="profile-top"><div class="avatar" id="detail-avatar">?</div><div class="profile-info"><div class="profile-name" id="detail-info-name"></div><div class="profile-meta" id="detail-info-meta"></div><div class="profile-date" id="detail-info-date"></div></div><button class="btn btn-sm btn-ghost" onclick="editStudent()">编辑</button></div><div class="profile-notes" id="detail-notes" style="display:none;"></div><div class="profile-parent" id="detail-parent-info" style="display:none;"><span id="detail-parent-text"></span></div></div>
+      <div class="hours-card"><div style="font-size:14px;font-weight:600;margin-bottom:16px;">课时情况</div><div class="hours-row"><div class="hours-item"><div class="hours-val" id="detail-total">0</div><div class="hours-lbl">总课时</div></div><div class="hours-divider"></div><div class="hours-item"><div class="hours-val" id="detail-used" style="color:var(--red);">0</div><div class="hours-lbl">已用</div></div><div class="hours-divider"></div><div class="hours-item"><div class="hours-val" id="detail-remain" style="color:var(--red);">0</div><div class="hours-lbl">剩余</div></div></div><div class="progress-bar"><div class="progress-fill" id="detail-progress"></div></div><div class="progress-label" id="detail-progress-text">已使用 0%</div></div>
+      <div class="payment-card"><div class="payment-header"><span class="payment-title">缴费记录</span><span class="payment-total" id="total-paid">0</span><span class="payment-count" id="payment-count">0 笔</span></div><div id="payment-list" class="payment-row"></div><button class="btn btn-sm btn-ghost" onclick="showAddPayment()" style="width:100%;color:#30D158;">+ 添加缴费</button></div>
+      <div class="progress-card"><div class="progress-header" onclick="openProgressPage(currentDetailId)"><span class="progress-title">训练进程</span><span class="progress-arrow">›</span></div><div class="progress-row"><span class="progress-pct" id="progress-pct">0%</span><span class="progress-nums" id="progress-nums">0 / 0 项</span></div><div class="progress-bar" style="margin-bottom:8px;"><div class="progress-fill" id="progress-pct-bar"></div></div><div id="progress-cat-list"></div></div>
+      <button class="btn btn-primary" onclick="startTraining()" style="margin-bottom:14px;">开始训练</button>
+      <div style="display:flex;gap:8px;margin-bottom:14px;"><button class="btn btn-secondary" onclick="showAddSchedule()" style="flex:1;">安排课程</button><button class="btn btn-secondary" onclick="navigateTo('report',{studentId:currentDetailId})" style="flex:1;">训练报告</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;"><span style="font-size:15px;font-weight:600;">训练记录</span><span style="font-size:12px;color:var(--text-tertiary);" id="record-count">0 次</span></div>
       <div id="record-list" class="record-list"></div>
-      <div id="record-empty" class="empty-state" style="padding:40px 0;"><div class="empty-icon">/</div><div class="empty-title">还没有训练记录</div></div>
+      <div id="record-empty" class="empty-state" style="padding:40px 0;display:none;"><div class="empty-icon">/</div><div class="empty-title">还没有训练记录</div></div>
     </div>
   </div>
 
   <!-- Add Student -->
   <div id="page-add" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="add-title">添加学员</div><div class="nav-placeholder"></div></div>
-    <div class="page-content"><div class="form-card">
-      <div class="form-group"><label class="form-label">姓名<span class="required">*</span></label><input type="text" class="form-input" id="input-name" placeholder="请输入学员姓名"></div>
-      <div class="form-group"><label class="form-label">联系电话</label><input type="tel" class="form-input" id="input-phone" placeholder="手机号" maxlength="11"></div>
-      <div class="form-group"><label class="form-label">年龄</label><input type="number" class="form-input" id="input-age" placeholder="年龄" min="1" max="99"></div>
-      <div class="form-group"><label class="form-label">性别</label><div class="segmented-control" id="gender-picker"><button class="seg-btn active" data-value="男">男</button><button class="seg-btn" data-value="女">女</button></div></div>
-      <div class="form-group"><label class="form-label">分组</label><input type="text" class="form-input" id="input-group" placeholder="如：初级班、提高班"></div>
-      <div class="form-group"><label class="form-label">家长姓名</label><input type="text" class="form-input" id="input-parent-name" placeholder="学员家长姓名"></div>
-      <div class="form-group"><label class="form-label">家长电话</label><input type="tel" class="form-input" id="input-parent-phone" placeholder="家长联系电话"></div>
-      <div class="form-group"><label class="form-label">总课时<span class="required">*</span></label><input type="number" class="form-input" id="input-hours" placeholder="购买的课时数" min="1"></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="add-title">添加学员</div><div class="nav-placeholder"></div></div>
+    <div class="page-content"><div class="card">
+      <div class="form-group"><label class="form-label">姓名<span class="form-req">*</span></label><input type="text" class="form-input" id="input-name" placeholder="学员姓名"></div>
+      <div class="form-group"><label class="form-label">电话</label><input type="tel" class="form-input" id="input-phone" placeholder="手机号" maxlength="11"></div>
+      <div class="form-group"><label class="form-label">年龄</label><input type="number" class="form-input" id="input-age" placeholder="年龄"></div>
+      <div class="form-group"><label class="form-label">性别</label><div class="segmented" id="gender-picker"><button class="seg-btn active" data-value="男">男</button><button class="seg-btn" data-value="女">女</button></div></div>
+      <div class="form-group"><label class="form-label">分组</label><input type="text" class="form-input" id="input-group" placeholder="如：初级班"></div>
+      <div class="form-group"><label class="form-label">家长姓名</label><input type="text" class="form-input" id="input-parent-name" placeholder="家长姓名"></div>
+      <div class="form-group"><label class="form-label">家长电话</label><input type="tel" class="form-input" id="input-parent-phone" placeholder="家长电话"></div>
+      <div class="form-group"><label class="form-label">总课时<span class="form-req">*</span></label><input type="number" class="form-input" id="input-hours" placeholder="课时数"></div>
       <div class="form-group"><label class="form-label">入学日期</label><input type="date" class="form-input" id="input-date"></div>
-      <div class="form-group"><label class="form-label">备注</label><textarea class="form-textarea" id="input-notes" placeholder="水平、特点等备注" rows="2"></textarea></div>
-      <button class="btn-primary" id="btn-save" onclick="saveStudent()">添加学员</button>
+      <div class="form-group"><label class="form-label">备注</label><textarea class="form-textarea" id="input-notes" placeholder="备注" rows="2"></textarea></div>
+      <button class="btn btn-primary" id="btn-save" onclick="saveStudent()">添加学员</button>
     </div></div>
   </div>
 
   <!-- Training -->
   <div id="page-training" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">训练记录</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">训练记录</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
-      <div class="form-card"><div class="training-header-title" id="training-student-name">训练课</div><div class="form-row"><span class="form-label">日期</span><input type="date" class="form-input flex-1" id="training-date"></div><div class="form-row"><span class="form-label">时长</span><div class="stepper"><button class="stepper-btn" onclick="changeDuration(-1)">−</button><input type="number" class="stepper-input" id="training-duration" value="1" min="1"><span class="stepper-unit">课时</span><button class="stepper-btn" onclick="changeDuration(1)">+</button></div></div></div>
-      <div class="section-header"><span class="section-title">训练项目</span><span class="section-count" id="check-count">勾选 0 / 0</span></div>
-      <div class="form-card" id="checklist-container"></div>
-      <div class="add-custom-row" id="add-custom-row"><button class="btn-add-custom" onclick="showCustomInput()">+ 添加自定义项目</button></div>
-      <div class="custom-input-row" id="custom-input-row" style="display:none;"><input type="text" class="form-input" id="custom-input" placeholder="输入训练项目"><button class="btn-primary btn-sm" onclick="confirmCustom()">添加</button><button class="btn-cancel btn-sm" onclick="cancelCustom()">取消</button></div>
-      <div class="form-card" style="margin-top:12px;"><div class="form-group" style="margin-bottom:0;"><label class="form-label">训练备注</label><textarea class="form-textarea" id="training-notes" placeholder="本次训练表现、问题等..." rows="2"></textarea></div></div>
-      <button class="btn-primary btn-large" onclick="saveTrainingRecord()">完成训练，保存记录</button>
+      <div class="card" style="margin-bottom:14px;"><div style="font-size:16px;font-weight:600;padding:2px 0 8px;" id="training-student-name">训练课</div><div class="form-row"><span class="form-label">日期</span><input type="date" class="form-input" id="training-date" style="flex:1;"></div><div class="form-row"><span class="form-label">时长</span><div class="stepper"><button class="stepper-btn" onclick="changeDuration(-1)">−</button><input type="number" class="stepper-input" id="training-duration" value="1" min="1"><span style="font-size:13px;color:var(--text-secondary);">课时</span><button class="stepper-btn" onclick="changeDuration(1)">+</button></div></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;"><span style="font-size:15px;font-weight:600;">训练项目</span><span style="font-size:12px;color:var(--text-tertiary);" id="check-count">0 / 0</span></div>
+      <div class="card" id="checklist-container" style="padding:2px 16px 16px;"></div>
+      <div style="margin:10px 0;"><button class="btn btn-sm btn-ghost" onclick="showCustomInput()" style="width:100%;">+ 自定义项目</button></div>
+      <div id="custom-input-row" style="display:none;display:flex;gap:8px;margin-bottom:10px;"><input type="text" class="form-input" id="custom-input" placeholder="输入项目名"><button class="btn btn-sm btn-primary" onclick="confirmCustom()">添加</button><button class="btn btn-sm btn-ghost" onclick="cancelCustom()">取消</button></div>
+      <div class="card" style="margin-bottom:14px;"><div class="form-group" style="margin:0;"><label class="form-label">备注</label><textarea class="form-textarea" id="training-notes" placeholder="训练备注" rows="2"></textarea></div></div>
+      <button class="btn btn-primary" onclick="saveTrainingRecord()">完成训练，保存记录</button>
     </div>
   </div>
 
   <!-- Progress -->
   <div id="page-progress" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="prog-title">训练进程</div><div class="nav-placeholder"></div></div>
-    <div class="page-content"><div class="prog-overall-card"><div class="avatar" id="prog-avatar">?</div><div class="prog-overall-info"><div class="prog-overall-text" id="prog-overall">总进度: 0/0 (0%)</div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" id="prog-overall-bar" style="width:0%"></div></div></div></div><div class="form-card" style="padding:4px 16px 16px;"><div id="progress-tree"></div></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="prog-title">训练进程</div><div class="nav-placeholder"></div></div>
+    <div class="page-content"><div class="card" style="display:flex;align-items:center;gap:14px;margin-bottom:14px;"><div class="avatar" id="prog-avatar">?</div><div style="flex:1;"><div style="font-size:15px;font-weight:600;" id="prog-overall">总进度</div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" id="prog-overall-bar" style="width:0%"></div></div></div></div><div class="card" style="padding:2px 16px 16px;"><div id="progress-tree"></div></div></div>
   </div>
 
   <!-- Report -->
   <div id="page-report" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">训练报告</div><button class="btn-edit" onclick="shareReport()">分享</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">训练报告</div><button class="btn btn-sm btn-ghost" onclick="shareReport()">分享</button></div>
     <div class="page-content"><div class="report-card" id="report-content"></div></div>
   </div>
 
   <!-- Schedule Tab -->
   <div id="page-schedule-tab" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">课表安排</div><button class="btn-edit" onclick="exportWeekSchedule()">导出</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">课表</div><button class="btn btn-sm btn-ghost" onclick="exportWeekSchedule()">导出</button></div>
     <div class="page-content">
       <div class="week-header"><button class="cal-nav-btn" onclick="changeWeek(-1)">‹</button><span class="week-label" id="week-label"></span><button class="cal-nav-btn" onclick="changeWeek(1)">›</button></div>
       <div class="week-grid" id="week-grid"></div>
-      <div style="text-align:center;margin-bottom:16px;"><button class="btn-secondary" onclick="navigateTo('schedule')" style="width:auto;padding:0 24px;">月视图</button></div>
-      <div class="section-header"><span class="section-title">快速排课</span></div>
-      <div class="form-card"><div class="form-row"><span class="form-label">学员</span><select class="form-input flex-1" id="quick-sched-student"></select></div><div class="form-row"><span class="form-label">日期</span><input type="date" class="form-input flex-1" id="quick-sched-date"></div><div class="form-row"><span class="form-label">时间</span><input type="time" class="form-input flex-1" id="quick-sched-time"></div><button class="btn-primary" onclick="quickSchedule()" style="margin-top:12px;">确认排课</button></div>
+      <div style="text-align:center;margin-bottom:16px;"><button class="btn btn-sm btn-ghost" onclick="navigateTo('schedule')">月视图</button></div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:10px;">快速排课</div>
+      <div class="card"><div class="form-row"><span class="form-label">学员</span><select class="form-input" id="quick-sched-student" style="flex:1;"></select></div><div class="form-row"><span class="form-label">日期</span><input type="date" class="form-input" id="quick-sched-date" style="flex:1;"></div><div class="form-row"><span class="form-label">时间</span><input type="time" class="form-input" id="quick-sched-time" style="flex:1;"></div><button class="btn btn-primary" onclick="quickSchedule()" style="margin-top:10px;">确认排课</button></div>
     </div>
   </div>
 
   <!-- Calendar Month -->
   <div id="page-schedule" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">课程日历</div><div class="nav-placeholder"></div></div>
-    <div class="page-content"><div class="cal-header"><button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button><span class="cal-month-label" id="sched-month-label"></span><button class="cal-nav-btn" onclick="changeMonth(1)">›</button></div><div class="cal-grid" id="cal-grid"></div><div class="section-header"><span class="section-title" id="day-schedule-date">--</span></div><div id="day-schedule-list" class="day-schedule-list"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">日历</div><div class="nav-placeholder"></div></div>
+    <div class="page-content"><div class="cal-nav"><button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button><span class="cal-month" id="sched-month-label"></span><button class="cal-nav-btn" onclick="changeMonth(1)">›</button></div><div class="cal-grid" id="cal-grid"></div><div style="font-size:15px;font-weight:600;margin-bottom:8px;" id="day-schedule-date">--</div><div id="day-schedule-list"></div></div>
   </div>
 
   <!-- Journal -->
   <div id="page-journal" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">训练纪要</div><button class="btn-edit" onclick="showAddJournal()">+</button></div>
-    <div class="page-content">
-      <div class="search-row" style="padding-left:0;padding-right:0;"><input type="text" class="search-input" id="journal-search" placeholder="搜索纪要..." oninput="renderJournal()"></div>
-      <div id="journal-list"></div>
-    </div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">纪要</div><button class="btn btn-sm btn-ghost" onclick="showAddJournal()">+</button></div>
+    <div class="page-content"><input type="text" class="search-box" id="journal-search" placeholder="搜索纪要..." oninput="renderJournal()"><div id="journal-list"></div></div>
   </div>
 
   <!-- Finance -->
   <div id="page-finance" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">财务管理</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">财务</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
-      <div class="finance-summary"><div class="finance-card"><div class="finance-card-val" style="color:#34C759;" id="fin-income">0</div><div class="finance-card-lbl">本月收入</div></div><div class="finance-card"><div class="finance-card-val" style="color:var(--red);" id="fin-expense">0</div><div class="finance-card-lbl">本月支出</div></div><div class="finance-card"><div class="finance-card-val" id="fin-profit">0</div><div class="finance-card-lbl">本月利润</div></div></div>
-      <div class="section-header"><span class="section-title">收入记录</span></div><div class="glass-card" id="fin-income-list"></div>
-      <div class="section-header"><span class="section-title">支出记录</span><button class="btn-edit" onclick="showAddExpense()">+</button></div><div class="glass-card"><div id="expense-list"></div></div>
-      <div class="section-header"><span class="section-title">月度对比</span></div><div class="glass-card" id="fin-month-chart"></div>
+      <div class="finance-summary"><div class="finance-card"><div class="finance-val" style="color:#30D158;" id="fin-income">0</div><div class="finance-lbl">本月收入</div></div><div class="finance-card"><div class="finance-val" style="color:var(--red);" id="fin-expense">0</div><div class="finance-lbl">本月支出</div></div><div class="finance-card"><div class="finance-val" id="fin-profit">0</div><div class="finance-lbl">利润</div></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:15px;font-weight:600;">收入</span></div><div class="card" id="fin-income-list"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 6px;"><span style="font-size:15px;font-weight:600;">支出</span><button class="btn btn-sm btn-ghost" onclick="showAddExpense()">+</button></div><div class="card"><div id="expense-list"></div></div>
+      <div style="font-size:15px;font-weight:600;margin:16px 0 8px;">月度对比</div><div class="card" id="fin-month-chart"></div>
     </div>
   </div>
 
   <!-- Stats -->
   <div id="page-stats" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">数据统计</div><button class="btn-edit" onclick="exportCSV()">导出</button></div>
-    <div class="page-content"><div class="stats-overview-card" id="stats-overview"></div><div class="form-card"><div style="font-size:17px;font-weight:600;padding:14px 0 4px;">学员分布</div><div id="stats-group-chart" style="padding-bottom:12px;"></div></div><div class="form-card" style="margin-top:14px;"><div style="font-size:17px;font-weight:600;padding:14px 0 4px;">训练频率</div><div id="stats-week-chart" style="padding-bottom:12px;"></div></div><div class="form-card" style="margin-top:14px;"><div style="font-size:17px;font-weight:600;padding:14px 0 4px;">课时消耗趋势</div><div id="stats-month-chart" style="padding-bottom:12px;"></div></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">统计</div><button class="btn btn-sm btn-ghost" onclick="exportCSV()">导出</button></div>
+    <div class="page-content"><div class="card" style="text-align:center;margin-bottom:16px;font-size:13px;color:var(--text-secondary);" id="stats-overview"></div><div class="card" style="margin-bottom:14px;"><div style="font-size:14px;font-weight:600;margin-bottom:10px;">学员分布</div><div id="stats-group-chart"></div></div><div class="card" style="margin-bottom:14px;"><div style="font-size:14px;font-weight:600;margin-bottom:10px;">训练频率</div><div id="stats-week-chart"></div></div><div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:10px;">课时趋势</div><div id="stats-month-chart"></div></div></div>
   </div>
 
 </div>
@@ -233,23 +201,18 @@
 <!-- Toast -->
 <div id="toast" class="toast"></div>
 
-<!-- Delete modal -->
-<div id="modal-overlay" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">确认删除</div><div class="modal-body" id="modal-body"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">取消</button><button class="btn-danger" id="modal-confirm-btn">删除</button></div></div></div>
+<!-- Modals -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">确认删除</div><div class="modal-body" id="modal-body"></div><div class="modal-actions"><button class="btn btn-sm btn-ghost" onclick="closeModal()" style="flex:1;">取消</button><button class="btn btn-sm btn-danger" id="modal-confirm-btn" style="flex:1;">删除</button></div></div></div>
 
-<!-- Payment modal -->
-<div id="payment-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">添加缴费</div><div class="modal-body" id="pay-student-name" style="font-weight:600;"></div><div class="pay-pkg-list" id="pay-packages"></div><input type="number" class="form-input" id="pay-amount" placeholder="缴费金额" style="margin-top:12px;"><input type="date" class="form-input" id="pay-date" style="margin-top:8px;"><textarea class="form-textarea" id="pay-notes" placeholder="备注" rows="1" style="margin-top:8px;"></textarea><div class="modal-actions" style="margin-top:16px;"><button class="btn-cancel" onclick="closePaymentModal()">取消</button><button class="btn-primary" onclick="confirmPayment()" style="background:#34C759;">确认缴费</button></div></div></div>
+<div id="payment-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">添加缴费</div><div class="modal-body" id="pay-student-name" style="font-weight:600;"></div><div id="pay-packages" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div><input type="number" class="form-input" id="pay-amount" placeholder="金额" style="margin-top:8px;"><input type="date" class="form-input" id="pay-date" style="margin-top:6px;"><textarea class="form-textarea" id="pay-notes" placeholder="备注" rows="1" style="margin-top:6px;"></textarea><div class="modal-actions" style="margin-top:14px;"><button class="btn btn-sm btn-ghost" onclick="closePaymentModal()" style="flex:1;">取消</button><button class="btn btn-sm btn-primary" onclick="confirmPayment()" style="flex:1;background:#30D158;">确认</button></div></div></div>
 
-<!-- Schedule modal -->
-<div id="schedule-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">安排课程</div><div class="modal-body" id="sched-modal-student"></div><input type="date" class="form-input" id="sched-modal-date"><input type="time" class="form-input" id="sched-modal-time" placeholder="选择时间" style="margin-top:8px;"><textarea class="form-textarea" id="sched-modal-note" placeholder="备注" rows="1" style="margin-top:8px;"></textarea><div class="modal-actions" style="margin-top:16px;"><button class="btn-cancel" onclick="closeScheduleModal()">取消</button><button class="btn-primary" onclick="confirmSchedule()">确认排课</button></div></div></div>
+<div id="schedule-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">安排课程</div><div class="modal-body" id="sched-modal-student"></div><input type="date" class="form-input" id="sched-modal-date"><input type="time" class="form-input" id="sched-modal-time" placeholder="时间" style="margin-top:6px;"><textarea class="form-textarea" id="sched-modal-note" placeholder="备注" rows="1" style="margin-top:6px;"></textarea><div class="modal-actions" style="margin-top:14px;"><button class="btn btn-sm btn-ghost" onclick="closeScheduleModal()" style="flex:1;">取消</button><button class="btn btn-sm btn-primary" onclick="confirmSchedule()" style="flex:1;">确认</button></div></div></div>
 
-<!-- Expense modal -->
-<div id="expense-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">添加支出</div><input type="number" class="form-input" id="exp-amount" placeholder="金额" style="margin-top:8px;"><select class="form-input" id="exp-category" style="margin-top:8px;"><option value="场地费">场地费</option><option value="器材费">器材费</option><option value="宣传费">宣传费</option><option value="其他">其他</option></select><input type="date" class="form-input" id="exp-date" style="margin-top:8px;"><textarea class="form-textarea" id="exp-notes" placeholder="备注" rows="1" style="margin-top:8px;"></textarea><div class="modal-actions" style="margin-top:16px;"><button class="btn-cancel" onclick="closeExpenseModal()">取消</button><button class="btn-primary" onclick="confirmExpense()" style="background:var(--red);">确认支出</button></div></div></div>
+<div id="expense-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">添加支出</div><input type="number" class="form-input" id="exp-amount" placeholder="金额" style="margin-top:6px;"><select class="form-input" id="exp-category" style="margin-top:6px;"><option value="场地费">场地费</option><option value="器材费">器材费</option><option value="宣传费">宣传费</option><option value="其他">其他</option></select><input type="date" class="form-input" id="exp-date" style="margin-top:6px;"><textarea class="form-textarea" id="exp-notes" placeholder="备注" rows="1" style="margin-top:6px;"></textarea><div class="modal-actions" style="margin-top:14px;"><button class="btn btn-sm btn-ghost" onclick="closeExpenseModal()" style="flex:1;">取消</button><button class="btn btn-sm btn-danger" onclick="confirmExpense()" style="flex:1;">确认</button></div></div></div>
 
-<!-- Journal modal -->
-<div id="journal-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title" id="journal-modal-title">写纪要</div><input type="text" class="form-input" id="journal-title-input" placeholder="标题" style="margin-top:8px;"><textarea class="form-textarea" id="journal-content-input" placeholder="记录训练心得、观察、计划..." rows="4" style="margin-top:8px;"></textarea><input type="date" class="form-input" id="journal-date-input" style="margin-top:8px;"><div class="modal-actions" style="margin-top:16px;"><button class="btn-cancel" onclick="closeJournalModal()">取消</button><button class="btn-primary" onclick="confirmJournal()">保存</button></div></div></div>
+<div id="journal-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title" id="journal-modal-title">写纪要</div><input type="text" class="form-input" id="journal-title-input" placeholder="标题" style="margin-top:6px;"><textarea class="form-textarea" id="journal-content-input" placeholder="记录训练心得" rows="4" style="margin-top:6px;"></textarea><input type="date" class="form-input" id="journal-date-input" style="margin-top:6px;"><div class="modal-actions" style="margin-top:14px;"><button class="btn btn-sm btn-ghost" onclick="closeJournalModal()" style="flex:1;">取消</button><button class="btn btn-sm btn-primary" onclick="confirmJournal()" style="flex:1;">保存</button></div></div></div>
 
-<!-- Profile modal -->
-<div id="profile-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">编辑资料</div><input type="text" class="form-input" id="prof-edit-name" placeholder="姓名" style="margin-top:8px;"><input type="tel" class="form-input" id="prof-edit-phone" placeholder="手机号" style="margin-top:8px;"><textarea class="form-textarea" id="prof-edit-bio" placeholder="个人简介" rows="2" style="margin-top:8px;"></textarea><div class="modal-actions" style="margin-top:16px;"><button class="btn-cancel" onclick="closeProfileModal()">取消</button><button class="btn-primary" onclick="confirmProfileEdit()">保存</button></div></div></div>
+<div id="profile-modal" class="modal-overlay" style="display:none;"><div class="modal-box"><div class="modal-title">编辑资料</div><input type="text" class="form-input" id="prof-edit-name" placeholder="姓名" style="margin-top:6px;"><input type="tel" class="form-input" id="prof-edit-phone" placeholder="手机号" style="margin-top:6px;"><textarea class="form-textarea" id="prof-edit-bio" placeholder="个人简介" rows="2" style="margin-top:6px;"></textarea><div class="modal-actions" style="margin-top:14px;"><button class="btn btn-sm btn-ghost" onclick="closeProfileModal()" style="flex:1;">取消</button><button class="btn btn-sm btn-primary" onclick="confirmProfileEdit()" style="flex:1;">保存</button></div></div></div>
 
 <script src="curriculum-data.js"></script>
 <script src="app.js"></script>
