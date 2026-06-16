@@ -127,7 +127,8 @@ function loginTrainer(id) { var t = DB.getTrainerById(id); if (!t) return; cance
 function showRegister() { document.getElementById('page-login').classList.remove('active'); document.getElementById('page-register').classList.add('active'); }
 function registerTrainer() { var n = document.getElementById('reg-name').value.trim(); if (!n) { showToast('请输入姓名'); return; } DB.addTrainer(n, document.getElementById('reg-phone').value.trim(), document.getElementById('reg-password').value.trim()); document.getElementById('reg-name').value=''; document.getElementById('reg-phone').value=''; document.getElementById('reg-password').value=''; document.getElementById('page-register').classList.remove('active'); document.getElementById('page-login').classList.add('active'); renderLogin(); showToast('注册成功！'); }
 function backToLogin() { document.getElementById('page-register').classList.remove('active'); document.getElementById('page-login').classList.add('active'); }
-function logoutTrainer() { if (!confirm('确定退出？')) return; DB.setTrainer(''); document.getElementById('page-profile').classList.remove('active'); document.getElementById('page-login').classList.add('active'); renderLogin(); }
+function switchAccount() { if (!confirm('切换到登录页选择其他账号？')) return; DB.setTrainer(''); document.getElementById('page-profile').classList.remove('active'); document.getElementById('page-login').classList.add('active'); renderLogin(); }
+function exitApp() { if (!confirm('确定退出登录？将清除当前登录状态。')) return; DB.setTrainer(''); localStorage.removeItem('currentTrainerId'); window.location.reload(); }
 
 // ==================== Dashboard Home ====================
 function renderDashboard() {
