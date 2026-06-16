@@ -199,10 +199,12 @@ select.form-input{appearance:none;-webkit-appearance:none;background-image:url("
 
 #tab-bar{display:none!important}
 /* ==================== Splash ==================== */
-#splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center}
+#splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.7s ease}
 #splash.show{display:flex}
-.splash-logo{font-size:64px;font-weight:900;color:var(--red);letter-spacing:-0.04em;position:relative;z-index:1;animation:splashPulse 2s ease-in-out infinite}@keyframes splashPulse{0%,100%{transform:scale(1);opacity:0.9}50%{transform:scale(1.06);opacity:1}}
-.splash-sub{font-size:13px;color:var(--text-2);margin-top:8px;position:relative;z-index:1;letter-spacing:0.03em}
+#splash.fade-out{opacity:0;pointer-events:none}
+.splash-logo{font-size:64px;font-weight:900;color:var(--red);letter-spacing:-0.04em;position:relative;z-index:1;animation:splashIn 0.8s var(--spring) both}@keyframes splashIn{from{transform:scale(0.3);opacity:0;filter:blur(8px)}to{transform:scale(1);opacity:1;filter:blur(0)}}
+.splash-logo.wave{animation:splashWave 2.5s ease-in-out infinite}@keyframes splashWave{0%,100%{transform:scale(1)}25%{transform:scale(1.04) translateY(-2px)}50%{transform:scale(0.98) translateY(2px)}75%{transform:scale(1.03) translateY(-1px)}}
+.splash-sub{font-size:13px;color:var(--text-2);margin-top:8px;position:relative;z-index:1;letter-spacing:0.03em;animation:splashSubIn 1s 0.3s var(--spring) both}@keyframes splashSubIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /* ==================== Page ==================== */
 .page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;flex-direction:column;transform:translateX(105%);transition:transform 0.35s var(--smooth);z-index:1;overflow:hidden}

@@ -101,6 +101,7 @@ function goBack() {
 function showSplash() {
   var splash = document.getElementById('splash');
   if (!splash) return;
+  splash.classList.remove('fade-out');
   splash.classList.add('show');
 
   var canvas = document.getElementById('splash-canvas');
@@ -109,15 +110,15 @@ function showSplash() {
     canvas.height = Math.min(window.innerHeight, 1000);
     var ctx = canvas.getContext('2d');
     var particles = [];
-    var count = 30;
+    var count = 35;
     for (var i = 0; i < count; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6 - 0.3,
-        size: Math.random() * 2 + 0.8,
-        alpha: Math.random() * 0.5 + 0.15,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5 - 0.2,
+        size: Math.random() * 2.5 + 0.5,
+        alpha: Math.random() * 0.6 + 0.2,
         life: 1
       });
     }
@@ -129,12 +130,12 @@ function showSplash() {
         var p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.life -= 0.002;
+        p.life -= 0.0015;
         if (p.life <= 0 || p.x < -10 || p.x > canvas.width + 10 || p.y < -10 || p.y > canvas.height + 10) {
           p.x = Math.random() * canvas.width;
           p.y = canvas.height + 10;
-          p.vx = (Math.random() - 0.5) * 0.6;
-          p.vy = -(Math.random() * 0.8 + 0.3);
+          p.vx = (Math.random() - 0.5) * 0.5;
+          p.vy = -(Math.random() * 0.6 + 0.2);
           p.life = 1;
         }
         ctx.beginPath();
@@ -145,15 +146,72 @@ function showSplash() {
       if (!stop) requestAnimationFrame(draw);
     }
     draw();
-    setTimeout(function() { stop = true; }, 2000);
+    setTimeout(function() { stop = true; }, 2200);
   }
 
-  setTimeout(function() { splash.classList.remove('show'); }, 2200);
+  // Add wave class after initial animation
+  setTimeout(function() {
+    var logo = splash.querySelector('.splash-logo');
+    if (logo) logo.classList.add('wave');
+  }, 800);
+
+  // Fade out
+  setTimeout(function() { splash.classList.add('fade-out'); }, 2400);
+  setTimeout(function() { splash.classList.remove('show'); splash.classList.remove('fade-out'); }, 3100);
+}
+
+// ==================== Login Water Wave ====================
+function startLoginWave() {
+  var canvas = document.getElementById('login-wave-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = 220, h = 80;
+  canvas.width = w; canvas.height = h;
+  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+
+  var time = 0;
+  var running = true;
+  function draw() {
+    if (!running) return;
+    ctx.clearRect(0, 0, w, h);
+    var imgData = ctx.createImageData(w, h);
+    // Draw text to offscreen, then apply wave displacement
+    var offCanvas = document.createElement('canvas');
+    offCanvas.width = w; offCanvas.height = h;
+    var offCtx = offCanvas.getContext('2d');
+    offCtx.fillStyle = '#FF3B30';
+    offCtx.font = '900 62px -apple-system, BlinkMacSystemFont, sans-serif';
+    offCtx.textAlign = 'center';
+    offCtx.textBaseline = 'middle';
+    offCtx.fillText('BASP', w/2, h/2);
+    var src = offCtx.getImageData(0, 0, w, h);
+
+    for (var y = 0; y < h; y++) {
+      var offset = Math.sin(y * 0.05 + time) * 3 + Math.sin(y * 0.1 + time * 1.3) * 2;
+      var srcY = Math.floor(y + offset);
+      if (srcY < 0) srcY = 0;
+      if (srcY >= h) srcY = h - 1;
+      for (var x = 0; x < w; x++) {
+        var si = (srcY * w + x) * 4;
+        var di = (y * w + x) * 4;
+        imgData.data[di] = src.data[si];
+        imgData.data[di+1] = src.data[si+1];
+        imgData.data[di+2] = src.data[si+2];
+        imgData.data[di+3] = src.data[si+3];
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    time += 0.05;
+    if (running) requestAnimationFrame(draw);
+  }
+  draw();
+  window._loginWaveCleanup = function() { running = false; };
 }
 
 // ==================== Login ====================
 function renderLogin() {
   currentPage = 'login';
+  if (window._loginWaveCleanup) window._loginWaveCleanup();
   var t = DB.getTrainers();
   var l = document.getElementById('trainer-list');
   var f = document.getElementById('login-footer');
@@ -167,10 +225,12 @@ function renderLogin() {
     }).join('');
     f.style.display = 'block';
   }
+  setTimeout(function() { startLoginWave(); }, 50);
 }
 function loginTrainer(id) {
   var t = DB.getTrainerById(id);
   if (!t) return;
+  if (window._loginWaveCleanup) window._loginWaveCleanup();
   DB.setTrainer(id);
   DB.migrateOldData(id);
   document.getElementById('page-login').classList.remove('active');
