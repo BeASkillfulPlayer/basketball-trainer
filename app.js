@@ -454,6 +454,31 @@ function closeJournalModal() { document.getElementById('journal-modal').style.di
 
 // ==================== Finance ====================
 function renderFinance() { const month = thisMonth(), pays = DB.getPayments(), exps = DB.getExpenses(), mi = pays.filter(p => p.date.startsWith(month)).reduce((s,p) => s + p.amount, 0), me = exps.filter(e => e.date.startsWith(month)).reduce((s,e) => s + e.amount, 0), profit = mi - me; document.getElementById('fin-income').textContent = '¥' + mi; document.getElementById('fin-expense').textContent = '¥' + me; document.getElementById('fin-profit').textContent = (profit >= 0 ? '¥' : '-¥') + Math.abs(profit); const ss = DB.getStudents(), rps = pays.sort((a,b) => b.date.localeCompare(a.date)).slice(0,10); document.getElementById('fin-income-list').innerHTML = rps.length === 0 ? '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:10px;">暂无收入</div>' : rps.map(p => { const st = ss.find(s => s.id === p.studentId); return '<div class="payment-item"><span class="pay-date">'+p.date+'</span><span class="pay-pkg">'+(st?escHtml(st.name):'')+' - '+escHtml(p.packageName)+'</span><span class="pay-hours">+'+p.hoursAdded+'课时</span><span class="pay-amount">¥'+p.amount+'</span></div>'; }).join(''); const re = exps.sort((a,b) => b.date.localeCompare(a.date)).slice(0,20); document.getElementById('expense-list').innerHTML = re.length === 0 ? '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:10px;">暂无支出</div>' : re.map(function(e){ return '<div class="swipe-wrap"><div class="swipe-content card-sm" style="margin:0;"><div class="expense-item" style="border:none;padding:0;"><span class="expense-date">'+e.date+'</span><span class="expense-cat">'+escHtml(e.category||'其他')+'</span><span class="expense-notes">'+escHtml(e.notes||'')+'</span><span class="expense-amount">-¥'+e.amount+'</span></div></div><div class="swipe-del" data-del="'+e.id+'" data-fn="deleteExpense">删除</div></div>'; }).join(''); const months = []; for (let i=5;i>=0;i--) { const d=new Date();d.setMonth(d.getMonth()-i);months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')); } const mv = Math.max(1,...months.map(m=>{const inc=pays.filter(p=>p.date.startsWith(m)).reduce((s,p)=>s+p.amount,0),exp=exps.filter(e=>e.date.startsWith(m)).reduce((s,e)=>s+e.amount,0);return Math.max(inc,exp);})); let ch = ''; months.forEach(m=>{const inc=pays.filter(p=>p.date.startsWith(m)).reduce((s,p)=>s+p.amount,0),exp=exps.filter(e=>e.date.startsWith(m)).reduce((s,e)=>s+e.amount,0);ch+='<div class="stats-bar-row"><span class="stats-bar-label">'+m+'</span><span class="stats-bar-count" style="color:#34C759;">+'+inc+'</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(inc/mv*100)+'%;background:#34C759;"></div></div></div><div class="stats-bar-row"><span class="stats-bar-label"></span><span class="stats-bar-count" style="color:#FF3B30;">-'+exp+'</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(exp/mv*100)+'%;background:#FF3B30;"></div></div></div>';}); document.getElementById('fin-month-chart').innerHTML = ch; }
+function showAddIncomeModal() {
+  document.getElementById('income-student').innerHTML = '<option value="">选择学员</option>' + DB.getStudents().map(function(s){ return '<option value="'+s.id+'">'+escHtml(s.name)+'</option>'; }).join('');
+  document.getElementById('income-packages').innerHTML = DB.getPackages().map(function(p){ return '<div class="pay-pkg-option" data-id="'+p.id+'" data-hours="'+p.hours+'" onclick="selectIncomePkg(this,\''+p.id+'\','+p.hours+')"><span class="pay-pkg-name">'+escHtml(p.name)+'</span><span class="pay-pkg-hours">'+p.hours+'课时</span></div>'; }).join('');
+  window._incomePkg = null;
+  document.getElementById('income-amount').value = '';
+  document.getElementById('income-date').value = todayStr();
+  document.getElementById('income-notes').value = '';
+  document.getElementById('income-modal').style.display = 'flex';
+}
+function selectIncomePkg(el, id, hours) { document.querySelectorAll('#income-packages .pay-pkg-option').forEach(function(e){ e.classList.remove('selected'); }); el.classList.add('selected'); window._incomePkg = { id: id, hours: hours, name: el.querySelector('.pay-pkg-name').textContent }; }
+function confirmIncome() {
+  var sid = document.getElementById('income-student').value;
+  if (!sid) { showToast('请选择学员'); return; }
+  if (!window._incomePkg) { showToast('请选套餐'); return; }
+  var amt = parseInt(document.getElementById('income-amount').value) || 0;
+  if (amt <= 0) { showToast('请输入金额'); return; }
+  var pays = DB.getPayments();
+  pays.push({ id: genId(), studentId: sid, amount: amt, packageName: window._incomePkg.name, hoursAdded: window._incomePkg.hours, date: document.getElementById('income-date').value || todayStr(), notes: document.getElementById('income-notes').value.trim(), createTime: new Date().toISOString() });
+  DB.savePayments(pays);
+  var students = DB.getStudents(); var s = students.find(function(st){ return st.id === sid; });
+  if (s) { s.totalHours += window._incomePkg.hours; s.remainingHours += window._incomePkg.hours; DB.saveStudents(students); }
+  closeIncomeModal(); renderFinance(); showToast('收入已记录');
+}
+function closeIncomeModal() { document.getElementById('income-modal').style.display = 'none'; }
+
 function showAddExpense() { document.getElementById('exp-amount').value='';document.getElementById('exp-date').value=todayStr();document.getElementById('exp-notes').value='';document.getElementById('expense-modal').style.display='flex'; }
 function confirmExpense() { const amt=parseInt(document.getElementById('exp-amount').value)||0;if(amt<=0){showToast('请输入金额');return;}const exps=DB.getExpenses();exps.push({id:genId(),date:document.getElementById('exp-date').value||todayStr(),amount:amt,category:document.getElementById('exp-category').value,notes:document.getElementById('exp-notes').value.trim()});DB.saveExpenses(exps);closeExpenseModal();renderFinance();showToast('支出已记录');}
 // ==================== Swipe to Delete ====================
@@ -530,6 +555,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('payment-modal').addEventListener('click',function(e){if(e.target===this)closePaymentModal();});
   document.getElementById('schedule-modal').addEventListener('click',function(e){if(e.target===this)closeScheduleModal();});
   document.getElementById('expense-modal').addEventListener('click',function(e){if(e.target===this)closeExpenseModal();});
+  document.getElementById('income-modal').addEventListener('click',function(e){if(e.target===this)closeIncomeModal();});
   document.getElementById('journal-modal').addEventListener('click',function(e){if(e.target===this)closeJournalModal();});
   document.getElementById('profile-modal').addEventListener('click',function(e){if(e.target===this)closeProfileModal();});
 });
