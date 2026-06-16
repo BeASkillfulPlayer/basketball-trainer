@@ -40,7 +40,7 @@
 
   <!-- Register -->
   <div id="page-register" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="backToLogin()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">注册</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="backToLogin()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">注册</div><div class="nav-placeholder"></div></div>
     <div class="page-content"><div class="card">
       <div class="form-group"><label class="form-label">姓名<span class="form-req">*</span></label><input type="text" class="form-input" id="reg-name" placeholder="你的姓名"></div>
       <div class="form-group"><label class="form-label">手机号</label><input type="tel" class="form-input" id="reg-phone" placeholder="选填"></div>
@@ -72,7 +72,7 @@
 
   <!-- Profile -->
   <div id="page-profile" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">我的</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">我的</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
       <input type="file" accept="image/png,image/jpeg,image/jpg,image/heic,image/heif" id="avatar-file-input" style="position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0.01;" onchange="uploadAvatar(event)">
       <div class="prof-hero">
@@ -99,7 +99,7 @@
 
   <!-- Students -->
   <div id="page-students" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">学员管理</div><button class="btn btn-sm btn-ghost" onclick="resetAddForm();navigateTo('add');">+ 添加</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">学员管理</div><button class="btn btn-sm btn-ghost" onclick="resetAddForm();navigateTo('add');">+ 添加</button></div>
     <div class="page-content">
       <input type="text" class="search-box" id="students-search" placeholder="搜索学员..." oninput="onStudentsSearch(event)">
       <div class="tag-row" id="students-group-tags"></div>
@@ -111,7 +111,7 @@
 
   <!-- Detail -->
   <div id="page-detail" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="detail-name">学员详情</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title" id="detail-name">学员详情</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
       <div class="profile-card"><div class="profile-top"><div class="avatar" id="detail-avatar">?</div><div class="profile-info"><div class="profile-name" id="detail-info-name"></div><div class="profile-meta" id="detail-info-meta"></div><div class="profile-date" id="detail-info-date"></div></div><button class="btn btn-sm btn-ghost" onclick="editStudent()">编辑</button></div><div class="profile-notes" id="detail-notes" style="display:none;"></div><div class="profile-parent" id="detail-parent-info" style="display:none;"><span id="detail-parent-text"></span></div></div>
       <div class="hours-card"><div style="font-size:14px;font-weight:600;margin-bottom:16px;">课时情况</div><div class="hours-row"><div class="hours-item"><div class="hours-val" id="detail-total">0</div><div class="hours-lbl">总课时</div></div><div class="hours-divider"></div><div class="hours-item"><div class="hours-val" id="detail-used" style="color:var(--red);">0</div><div class="hours-lbl">已用</div></div><div class="hours-divider"></div><div class="hours-item"><div class="hours-val" id="detail-remain" style="color:var(--red);">0</div><div class="hours-lbl">剩余</div></div></div><div class="progress-bar"><div class="progress-fill" id="detail-progress"></div></div><div class="progress-label" id="detail-progress-text">已使用 0%</div></div>
@@ -127,7 +127,7 @@
 
   <!-- Add Student -->
   <div id="page-add" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="add-title">添加学员</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title" id="add-title">添加学员</div><div class="nav-placeholder"></div></div>
     <div class="page-content"><div class="card">
       <div class="form-group"><label class="form-label">姓名<span class="form-req">*</span></label><input type="text" class="form-input" id="input-name" placeholder="学员姓名"></div>
       <div class="form-group"><label class="form-label">电话</label><input type="tel" class="form-input" id="input-phone" placeholder="手机号" maxlength="11"></div>
@@ -145,7 +145,7 @@
 
   <!-- Training -->
   <div id="page-training" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">训练记录</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">训练记录</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
       <div class="card" style="margin-bottom:14px;"><div style="font-size:16px;font-weight:600;padding:2px 0 8px;" id="training-student-name">训练课</div><div class="form-row"><span class="form-label">日期</span><input type="date" class="form-input" id="training-date" style="flex:1;"></div><div class="form-row"><span class="form-label">时长</span><div class="stepper"><button class="stepper-btn" onclick="changeDuration(-1)">−</button><input type="number" class="stepper-input" id="training-duration" value="1" min="1"><span style="font-size:13px;color:var(--text-secondary);">课时</span><button class="stepper-btn" onclick="changeDuration(1)">+</button></div></div></div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;"><span style="font-size:15px;font-weight:600;">训练项目</span><span style="font-size:12px;color:var(--text-tertiary);" id="check-count">0 / 0</span></div>
@@ -159,19 +159,19 @@
 
   <!-- Progress -->
   <div id="page-progress" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title" id="prog-title">训练进程</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title" id="prog-title">训练进程</div><div class="nav-placeholder"></div></div>
     <div class="page-content"><div class="card" style="display:flex;align-items:center;gap:14px;margin-bottom:14px;"><div class="avatar" id="prog-avatar">?</div><div style="flex:1;"><div style="font-size:15px;font-weight:600;" id="prog-overall">总进度</div><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" id="prog-overall-bar" style="width:0%"></div></div></div></div><div class="card" style="padding:2px 16px 16px;"><div id="progress-tree"></div></div></div>
   </div>
 
   <!-- Report -->
   <div id="page-report" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">训练报告</div><button class="btn btn-sm btn-ghost" onclick="shareReport()">分享</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">训练报告</div><button class="btn btn-sm btn-ghost" onclick="shareReport()">分享</button></div>
     <div class="page-content"><div class="report-card" id="report-content"></div></div>
   </div>
 
   <!-- Schedule Tab -->
   <div id="page-schedule-tab" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">课表</div><button class="btn btn-sm btn-ghost" onclick="exportWeekSchedule()">导出</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">课表</div><button class="btn btn-sm btn-ghost" onclick="exportWeekSchedule()">导出</button></div>
     <div class="page-content">
       <div class="week-header"><button class="cal-nav-btn" onclick="changeWeek(-1)">‹</button><span class="week-label" id="week-label"></span><button class="cal-nav-btn" onclick="changeWeek(1)">›</button></div>
       <div class="week-grid" id="week-grid"></div>
@@ -183,19 +183,19 @@
 
   <!-- Calendar Month -->
   <div id="page-schedule" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">日历</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">日历</div><div class="nav-placeholder"></div></div>
     <div class="page-content"><div class="cal-nav"><button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button><span class="cal-month" id="sched-month-label"></span><button class="cal-nav-btn" onclick="changeMonth(1)">›</button></div><div class="cal-grid" id="cal-grid"></div><div style="font-size:15px;font-weight:600;margin-bottom:8px;" id="day-schedule-date">--</div><div id="day-schedule-list"></div></div>
   </div>
 
   <!-- Journal -->
   <div id="page-journal" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">纪要</div><button class="btn btn-sm btn-ghost" onclick="showAddJournal()">+</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">纪要</div><button class="btn btn-sm btn-ghost" onclick="showAddJournal()">+</button></div>
     <div class="page-content"><input type="text" class="search-box" id="journal-search" placeholder="搜索纪要..." oninput="renderJournal()"><div id="journal-list"></div></div>
   </div>
 
   <!-- Finance -->
   <div id="page-finance" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">财务</div><div class="nav-placeholder"></div></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">财务</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
       <div class="finance-summary"><div class="finance-card"><div class="finance-val" style="color:#30D158;" id="fin-income">0</div><div class="finance-lbl">本月收入</div></div><div class="finance-card"><div class="finance-val" style="color:var(--red);" id="fin-expense">0</div><div class="finance-lbl">本月支出</div></div><div class="finance-card"><div class="finance-val" id="fin-profit">0</div><div class="finance-lbl">利润</div></div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:15px;font-weight:600;">收入</span></div><div class="card" id="fin-income-list"></div>
@@ -206,7 +206,7 @@
 
   <!-- Stats -->
   <div id="page-stats" class="page">
-    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">统计</div><button class="btn btn-sm btn-ghost" onclick="exportCSV()">导出</button></div>
+    <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 4 7 12 16 20"/></svg></div><div class="nav-title">统计</div><button class="btn btn-sm btn-ghost" onclick="exportCSV()">导出</button></div>
     <div class="page-content"><div class="card" style="text-align:center;margin-bottom:16px;font-size:13px;color:var(--text-secondary);" id="stats-overview"></div><div class="card" style="margin-bottom:14px;"><div style="font-size:14px;font-weight:600;margin-bottom:10px;">学员分布</div><div id="stats-group-chart"></div></div><div class="card" style="margin-bottom:14px;"><div style="font-size:14px;font-weight:600;margin-bottom:10px;">训练频率</div><div id="stats-week-chart"></div></div><div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:10px;">课时趋势</div><div id="stats-month-chart"></div></div></div>
   </div>
 
