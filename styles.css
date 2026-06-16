@@ -180,13 +180,18 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 /* ==================== Stats ==================== */
 .stat-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}.stat-bar-label{color:var(--text-secondary);width:36px}.stat-bar-count{color:var(--text-secondary);width:32px;text-align:right}.stat-bar{flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}.stat-bar-fill{height:100%;background:var(--red);border-radius:2px}
 
+/* ==================== Splash ==================== */
+#splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity 0.6s,visibility 0.6s}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+
 /* ==================== Login ==================== */
 .login-wrap{padding:0 28px;height:100%;display:flex;flex-direction:column;justify-content:center;text-align:center}
-.login-brand{margin-bottom:48px}
-.login-logo{font-size:56px;font-weight:900;color:var(--red);letter-spacing:-0.04em;animation:loginPulse 3s ease-in-out infinite;display:inline-block}@keyframes loginPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:0.85}}
-.login-sub{font-size:13px;color:var(--text-tertiary);margin-top:6px;letter-spacing:0.02em}
+.login-brand{position:relative;margin-bottom:48px;display:inline-block}
+.login-logo{font-size:56px;font-weight:900;color:var(--red);letter-spacing:-0.04em;position:relative;z-index:1;animation:loginGlow 2.5s ease-in-out infinite}@keyframes loginGlow{0%,100%{text-shadow:0 0 20px rgba(255,69,58,0.4)}50%{text-shadow:0 0 40px rgba(255,69,58,0.7),0 0 80px rgba(255,69,58,0.3)}}
+.login-sub{font-size:13px;color:var(--text-tertiary);margin-top:6px;letter-spacing:0.02em;position:relative;z-index:1}
 .login-list-label{font-size:11px;font-weight:500;color:var(--text-tertiary);text-align:left;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em}
 .trainer-list{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}.trainer-card{background:var(--surface);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border:0.5px solid var(--border);transition:all 0.15s}.trainer-card:active{background:var(--surface-hover)}.trainer-info{flex:1}.trainer-name{font-size:16px;font-weight:600}.trainer-phone{font-size:12px;color:var(--text-tertiary);margin-top:1px}
+.trainer-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--red),#C0392B);color:#FFF;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}.trainer-avatar img{width:100%;height:100%;object-fit:cover}
 .login-footer{text-align:center}.login-link{font-size:13px;color:var(--text-tertiary);cursor:pointer;transition:color 0.15s}.login-link:active{color:var(--text)}
 
 /* ==================== Modal ==================== */

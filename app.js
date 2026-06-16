@@ -97,11 +97,35 @@ function goBack() {
   if (prev === 'journal') renderJournal();
 }
 
+// ==================== Splash ====================
+function showSplash() {
+  var canvas = document.getElementById('splash-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  var particles = [];
+  for (var i = 0; i < 50; i++) {
+    particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*1.5, vy: (Math.random()-0.5)*1.5, size: Math.random()*2+1, alpha: Math.random()*0.6+0.2 });
+  }
+  function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); for (var i=0;i<particles.length;i++) { var p=particles[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle='rgba(255,69,58,'+p.alpha+')'; ctx.fill(); } window._splashFrame=requestAnimationFrame(animate); }
+  animate();
+  setTimeout(function(){ cancelAnimationFrame(window._splashFrame); var splash=document.getElementById('splash'); splash.classList.add('hide'); setTimeout(function(){splash.style.display='none';},600); },2000);
+}
+
+function startLoginParticles() {
+  var canvas=document.getElementById('login-canvas'); if(!canvas)return;
+  var ctx=canvas.getContext('2d'); var rect=canvas.parentElement.getBoundingClientRect(); canvas.width=rect.width; canvas.height=rect.height;
+  var particles=[];
+  for(var i=0;i<30;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.8,vy:(Math.random()-0.5)*0.8,size:Math.random()*1.5+0.5,alpha:Math.random()*0.5+0.1});}
+  function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);for(var i=0;i<particles.length;i++){var p=particles[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle='rgba(255,69,58,'+p.alpha+')';ctx.fill();}window._loginFrame=requestAnimationFrame(animate);}
+  animate();
+}
+
 // ==================== Login ====================
-function renderLogin() { currentPage = 'login'; const t = DB.getTrainers(); const l = document.getElementById('trainer-list'); l.innerHTML = t.length === 0 ? '<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏀</div><div class="empty-title">欢迎使用 BASP</div><div class="empty-desc">点击下方注册你的教练账号</div></div>' : t.map(x => '<div class="trainer-card card-enter" onclick="loginTrainer(\''+x.id+'\')"><div class="avatar-sm avatar-c'+hashColor(x.id)+'">'+(x.name||'?')[0]+'</div><div class="trainer-info"><div class="trainer-name">'+escHtml(x.name)+'</div><div class="trainer-phone">'+escHtml(x.phone||'')+'</div></div><span class="trainer-arrow">›</span></div>').join(''); }
-function loginTrainer(id) { const t = DB.getTrainerById(id); if (!t) return; DB.setTrainer(id); DB.migrateOldData(id); document.getElementById('page-login').classList.remove('active'); document.getElementById('page-dashboard').classList.add('active'); renderDashboard(); }
+function renderLogin() { currentPage = 'login'; cancelAnimationFrame(window._loginFrame); var t = DB.getTrainers(); var l = document.getElementById('trainer-list'); l.innerHTML = t.length === 0 ? '<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">+</div><div class="empty-title">还没有教练账号</div><div class="empty-desc">点击下方创建</div></div>' : t.map(function(x){ var av = x.avatar ? '<img src="'+x.avatar+'" alt="">' : (x.name||'?')[0]; return '<div class="trainer-card card-enter" onclick="loginTrainer(\''+x.id+'\')"><div class="trainer-avatar avatar-c'+hashColor(x.id)+'">'+av+'</div><div class="trainer-info"><div class="trainer-name">'+escHtml(x.name)+'</div><div class="trainer-phone">'+escHtml(x.phone||'')+'</div></div></div>'; }).join(''); startLoginParticles(); }
+function loginTrainer(id) { var t = DB.getTrainerById(id); if (!t) return; cancelAnimationFrame(window._loginFrame); DB.setTrainer(id); DB.migrateOldData(id); document.getElementById('page-login').classList.remove('active'); document.getElementById('page-dashboard').classList.add('active'); renderDashboard(); }
 function showRegister() { document.getElementById('page-login').classList.remove('active'); document.getElementById('page-register').classList.add('active'); }
-function registerTrainer() { const n = document.getElementById('reg-name').value.trim(); if (!n) { showToast('请输入姓名'); return; } DB.addTrainer(n, document.getElementById('reg-phone').value.trim(), document.getElementById('reg-password').value.trim()); document.getElementById('reg-name').value=''; document.getElementById('reg-phone').value=''; document.getElementById('reg-password').value=''; document.getElementById('page-register').classList.remove('active'); document.getElementById('page-login').classList.add('active'); renderLogin(); showToast('注册成功！'); }
+function registerTrainer() { var n = document.getElementById('reg-name').value.trim(); if (!n) { showToast('请输入姓名'); return; } DB.addTrainer(n, document.getElementById('reg-phone').value.trim(), document.getElementById('reg-password').value.trim()); document.getElementById('reg-name').value=''; document.getElementById('reg-phone').value=''; document.getElementById('reg-password').value=''; document.getElementById('page-register').classList.remove('active'); document.getElementById('page-login').classList.add('active'); renderLogin(); showToast('注册成功！'); }
 function backToLogin() { document.getElementById('page-register').classList.remove('active'); document.getElementById('page-login').classList.add('active'); }
 function logoutTrainer() { if (!confirm('确定退出？')) return; DB.setTrainer(''); document.getElementById('page-profile').classList.remove('active'); document.getElementById('page-login').classList.add('active'); renderLogin(); }
 
@@ -311,8 +335,8 @@ function closeModal(){document.getElementById('modal-overlay').style.display='no
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('input-date').value=todayStr();document.getElementById('training-date').value=todayStr();
   const ct=DB.getCurrentTrainerId();
-  if(ct&&DB.getTrainerById(ct)){DB.setTrainer(ct);document.getElementById('page-login').classList.remove('active');document.getElementById('page-dashboard').classList.add('active');renderDashboard();}
-  else{renderLogin();}
+  if(ct&&DB.getTrainerById(ct)){DB.setTrainer(ct);document.getElementById('page-login').classList.remove('active');document.getElementById('page-dashboard').classList.add('active');renderDashboard();setTimeout(function(){var splash=document.getElementById('splash');if(splash){splash.classList.add('hide');setTimeout(function(){splash.style.display='none';},600);}},1800);}
+  else{renderLogin();showSplash();}
   document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
   document.getElementById('payment-modal').addEventListener('click',function(e){if(e.target===this)closePaymentModal();});
   document.getElementById('schedule-modal').addEventListener('click',function(e){if(e.target===this)closeScheduleModal();});
