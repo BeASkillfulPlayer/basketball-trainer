@@ -101,8 +101,7 @@ function goBack() {
 function showSplash() {
   var splash = document.getElementById('splash');
   if (!splash) return;
-  splash.classList.remove('hide');
-  splash.style.display = 'flex';
+  splash.classList.add('show');
 
   var canvas = document.getElementById('splash-canvas');
   if (canvas) {
@@ -149,8 +148,7 @@ function showSplash() {
     setTimeout(function() { stop = true; }, 2000);
   }
 
-  setTimeout(function() { splash.classList.add('hide'); }, 2200);
-  setTimeout(function() { splash.style.display = 'none'; }, 2800);
+  setTimeout(function() { splash.classList.remove('show'); }, 2200);
 }
 
 // ==================== Login ====================

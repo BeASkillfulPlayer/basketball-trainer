@@ -198,7 +198,12 @@ select.form-input{appearance:none;-webkit-appearance:none;background-image:url("
 
 #tab-bar{display:none!important}
 /* ==================== Splash ==================== */
-#splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease,visibility 0.6s ease}
-#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center}
+#splash.show{display:flex}
 .splash-logo{font-size:64px;font-weight:900;color:var(--red);letter-spacing:-0.04em;position:relative;z-index:1;animation:splashPulse 2s ease-in-out infinite}@keyframes splashPulse{0%,100%{transform:scale(1);opacity:0.9}50%{transform:scale(1.06);opacity:1}}
 .splash-sub{font-size:13px;color:var(--text-2);margin-top:8px;position:relative;z-index:1;letter-spacing:0.03em}
+
+/* ==================== Page ==================== */
+.page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;flex-direction:column;transform:translateX(105%);transition:transform 0.35s var(--smooth);z-index:1;overflow:hidden}
+.page.active{transform:translateX(0)}
+.page.slide-back{transform:translateX(105%)}
