@@ -209,7 +209,9 @@ function renderDashboard() {
     avatarEl.textContent = trainer ? (trainer.name||'?')[0] : '?';
     avatarEl.innerHTML = avatarEl.textContent;
   }
-  document.getElementById('dash-trainer-name').textContent = trainer ? trainer.name : '教练';
+  document.getElementById('dash-name').textContent = trainer ? trainer.name : '教练';
+  var days = ['日','一','二','三','四','五','六']; var now = new Date();
+  document.getElementById('dash-date').textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 星期'+days[now.getDay()];
 
   // 4 card stats
   document.getElementById('dash-students-stat').textContent = ss.length + ' 位学员';
