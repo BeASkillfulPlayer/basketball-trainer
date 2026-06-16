@@ -162,7 +162,7 @@ function renderProfile() {
 function editProfile() { const t = DB.getTrainerById(DB.getCurrentTrainerId()); if (!t) return; document.getElementById('prof-edit-name').value = t.name || ''; document.getElementById('prof-edit-phone').value = t.phone || ''; document.getElementById('prof-edit-bio').value = t.bio || ''; document.getElementById('profile-modal').style.display = 'flex'; }
 function confirmProfileEdit() { const n = document.getElementById('prof-edit-name').value.trim(); if (!n) { showToast('姓名不能为空'); return; } DB.updateTrainer(DB.getCurrentTrainerId(), { name: n, phone: document.getElementById('prof-edit-phone').value.trim(), bio: document.getElementById('prof-edit-bio').value.trim() }); closeProfileModal(); renderProfile(); renderDashboard(); showToast('资料已更新'); }
 function closeProfileModal() { document.getElementById('profile-modal').style.display = 'none'; }
-function uploadAvatar(event) { var file = event.target.files[0]; if (!file) return; if (file.size > 500000) { showToast('图片不能超过500KB'); return; } var reader = new FileReader(); reader.onload = function(e) { DB.updateTrainer(DB.getCurrentTrainerId(), { avatar: e.target.result }); renderProfile(); renderDashboard(); showToast('头像已更新'); }; reader.readAsDataURL(file); }
+function uploadAvatar(event) { var file = event.target.files[0]; if (!file) return; if (file.size > 3 * 1024 * 1024) { showToast('图片不能超过3MB'); return; } var reader = new FileReader(); reader.onload = function(e) { DB.updateTrainer(DB.getCurrentTrainerId(), { avatar: e.target.result }); renderProfile(); renderDashboard(); showToast('头像已更新'); }; reader.readAsDataURL(file); }
 
 // ==================== Students Page ====================
 function renderStudentsPage() {
