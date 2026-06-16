@@ -99,18 +99,9 @@ function goBack() {
 
 // ==================== Splash ====================
 function showSplash() {
-  var canvas = document.getElementById('splash-canvas');
-  if (!canvas) return;
-  var ctx = canvas.getContext('2d');
-  canvas.width = Math.min(window.innerWidth,430); canvas.height = Math.min(window.innerHeight,900);
-  var particles = [];
-  for (var i = 0; i < 25; i++) {
-    particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*1, vy: (Math.random()-0.5)*1, size: Math.random()*2+1, alpha: Math.random()*0.4+0.15 });
-  }
-  var running = true;
-  function animate() { if(!running)return; ctx.clearRect(0,0,canvas.width,canvas.height); for (var i=0;i<particles.length;i++) { var p=particles[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle='rgba(255,69,58,'+p.alpha+')'; ctx.fill(); } if(running)requestAnimationFrame(animate); }
-  animate();
-  setTimeout(function(){ running=false; var splash=document.getElementById('splash'); if(splash){splash.classList.add('hide');setTimeout(function(){splash.style.display='none';},600);} }, 2000);
+  var splash = document.getElementById('splash');
+  if (!splash) return;
+  setTimeout(function(){ splash.classList.add('hide'); setTimeout(function(){ splash.style.display='none'; }, 600); }, 2400);
 }
 
 function startLoginParticles() {
@@ -338,8 +329,9 @@ function closeModal(){document.getElementById('modal-overlay').style.display='no
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('input-date').value=todayStr();document.getElementById('training-date').value=todayStr();
   const ct=DB.getCurrentTrainerId();
-  if(ct&&DB.getTrainerById(ct)){DB.setTrainer(ct);document.getElementById('page-login').classList.remove('active');document.getElementById('page-dashboard').classList.add('active');renderDashboard();setTimeout(function(){var splash=document.getElementById('splash');if(splash){splash.classList.add('hide');setTimeout(function(){splash.style.display='none';},600);}},1800);}
-  else{renderLogin();showSplash();}
+  showSplash();
+  if(ct&&DB.getTrainerById(ct)){DB.setTrainer(ct);document.getElementById('page-login').classList.remove('active');document.getElementById('page-dashboard').classList.add('active');renderDashboard();}
+  else{renderLogin();}
   document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
   document.getElementById('payment-modal').addEventListener('click',function(e){if(e.target===this)closePaymentModal();});
   document.getElementById('schedule-modal').addEventListener('click',function(e){if(e.target===this)closeScheduleModal();});
