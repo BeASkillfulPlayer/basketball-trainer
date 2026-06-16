@@ -106,12 +106,13 @@ body::before{content:'';position:fixed;top:-20%;left:-10%;width:120%;height:140%
 .tag{font-size:13px;padding:7px 16px;border-radius:var(--r-full);background:rgba(255,255,255,0.55);color:var(--text-2);cursor:pointer;transition:all 0.15s var(--spring)}.tag.active{background:var(--red);color:#FFF;box-shadow:0 2px 8px rgba(255,59,48,0.2)}.tag:active{transform:scale(0.94)}
 .tag-badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:var(--r-full);background:rgba(255,59,48,0.1);color:var(--red);margin-right:4px;vertical-align:middle}
 
-.student-list{display:flex;flex-direction:column;gap:12px}
-.student-card{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:var(--r-lg);padding:20px 18px;border:0.5px solid rgba(255,255,255,0.5);box-shadow:var(--shadow-sm);cursor:pointer;transition:all 0.15s var(--spring);display:flex;align-items:center;gap:16px}.student-card:active{transform:scale(0.98);background:rgba(255,255,255,0.78)}
-.student-avatar{width:48px;height:48px;border-radius:50%;color:#FFF;font-size:18px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.student-info{flex:1;min-width:0}.student-info-name{font-size:17px;font-weight:600}.student-info-meta{font-size:13px;color:var(--text-2);margin-top:2px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.student-hours{text-align:center;flex-shrink:0}.student-hours-num{font-size:22px;font-weight:700;color:var(--red)}.student-hours-lbl{font-size:10px;color:var(--text-2);margin-top:1px}
-.student-card-foot{margin-top:12px;padding-top:12px;border-top:0.5px solid var(--sep-light);font-size:12px;color:var(--text-2);display:flex;gap:16px}
+.student-list{display:flex;flex-direction:column;gap:10px}
+.student-card{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:var(--r-lg);padding:16px 18px;border:0.5px solid rgba(255,255,255,0.5);box-shadow:var(--shadow-sm);cursor:pointer;transition:all 0.15s var(--spring);display:flex;align-items:center;gap:14px}.student-card:active{transform:scale(0.98);background:rgba(255,255,255,0.78)}
+.student-avatar{width:44px;height:44px;border-radius:50%;color:#FFF;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.student-info{flex:1;min-width:0}.student-name{font-size:16px;font-weight:600;line-height:1.3}.student-name span{font-size:12px;color:var(--text-2);font-weight:400}
+.student-progress-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.student-progress-bar{flex:1;height:4px;background:rgba(0,0,0,0.06);border-radius:2px;overflow:hidden}.student-progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width 0.5s ease}
+.student-progress-pct{font-size:11px;font-weight:600;color:var(--red);width:32px;text-align:right;flex-shrink:0}
 
 .avatar-c0{background:linear-gradient(135deg,#FF3B30,#FF6B5B)}.avatar-c1{background:linear-gradient(135deg,#007AFF,#34C759)}.avatar-c2{background:linear-gradient(135deg,#AF52DE,#FF3B30)}.avatar-c3{background:linear-gradient(135deg,#FF9500,#FF3B30)}.avatar-c4{background:linear-gradient(135deg,#34C759,#007AFF)}.avatar-c5{background:linear-gradient(135deg,#FFD700,#FF9500)}.avatar-c6{background:linear-gradient(135deg,#5AC8FA,#007AFF)}.avatar-c7{background:linear-gradient(135deg,#FF3B30,#C62828)}
 .avatar{width:56px;height:56px;border-radius:50%;color:#FFF;font-size:22px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
