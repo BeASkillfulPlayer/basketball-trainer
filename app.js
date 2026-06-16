@@ -160,48 +160,55 @@ function showSplash() {
   setTimeout(function() { splash.classList.remove('show'); splash.classList.remove('fade-out'); }, 3100);
 }
 
-// ==================== Login Water Wave ====================
-function startLoginWave() {
-  var canvas = document.getElementById('login-wave-canvas');
+// ==================== Login Particles ====================
+function startLoginParticles() {
+  var canvas = document.getElementById('login-particle-canvas');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
-  var w = 220, h = 80;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  var w = 220, h = 90;
   canvas.width = w; canvas.height = h;
   canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
 
-  var time = 0;
+  var particles = [];
+  var count = 25;
+  for (var i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      size: Math.random() * 2 + 0.5,
+      alpha: Math.random() * 0.5 + 0.2,
+      life: Math.random()
+    });
+  }
   var running = true;
   function draw() {
     if (!running) return;
     ctx.clearRect(0, 0, w, h);
-    var imgData = ctx.createImageData(w, h);
-    // Draw text to offscreen, then apply wave displacement
-    var offCanvas = document.createElement('canvas');
-    offCanvas.width = w; offCanvas.height = h;
-    var offCtx = offCanvas.getContext('2d');
-    offCtx.fillStyle = '#FF3B30';
-    offCtx.font = '900 62px -apple-system, BlinkMacSystemFont, sans-serif';
-    offCtx.textAlign = 'center';
-    offCtx.textBaseline = 'middle';
-    offCtx.fillText('BASP', w/2, h/2);
-    var src = offCtx.getImageData(0, 0, w, h);
-
-    for (var y = 0; y < h; y++) {
-      var offset = Math.sin(y * 0.05 + time) * 3 + Math.sin(y * 0.1 + time * 1.3) * 2;
-      var srcY = Math.floor(y + offset);
-      if (srcY < 0) srcY = 0;
-      if (srcY >= h) srcY = h - 1;
-      for (var x = 0; x < w; x++) {
-        var si = (srcY * w + x) * 4;
-        var di = (y * w + x) * 4;
-        imgData.data[di] = src.data[si];
-        imgData.data[di+1] = src.data[si+1];
-        imgData.data[di+2] = src.data[si+2];
-        imgData.data[di+3] = src.data[si+3];
+    for (var i = 0; i < count; i++) {
+      var p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.001;
+      if (p.life <= 0) {
+        p.x = Math.random() * w;
+        p.y = Math.random() * h;
+        p.life = 1;
       }
+      if (p.x < 0) p.x = w;
+      if (p.x > w) p.x = 0;
+      if (p.y < 0) p.y = h;
+      if (p.y > h) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      var gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+      gradient.addColorStop(0, 'rgba(255,69,58,' + (p.alpha * p.life) + ')');
+      gradient.addColorStop(1, 'rgba(255,69,58,0)');
+      ctx.fillStyle = gradient;
+      ctx.fill();
     }
-    ctx.putImageData(imgData, 0, 0);
-    time += 0.05;
     if (running) requestAnimationFrame(draw);
   }
   draw();
@@ -225,7 +232,7 @@ function renderLogin() {
     }).join('');
     f.style.display = 'block';
   }
-  setTimeout(function() { startLoginWave(); }, 50);
+  setTimeout(function() { startLoginParticles(); }, 50);
 }
 function loginTrainer(id) {
   var t = DB.getTrainerById(id);
