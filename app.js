@@ -67,6 +67,7 @@ function navigateTo(pageId, data) {
   np.classList.add('active'); np.classList.remove('slide-back');
   navStack.push(currentPage); currentPage = pageId;
   np.scrollTop = 0; const c = np.querySelector('.page-content'); if (c) c.scrollTop = 0;
+  setTimeout(bindSwipeDeletes, 200);
   if (pageId === 'dashboard') renderDashboard();
   if (pageId === 'profile') renderProfile();
   if (pageId === 'students') renderStudentsPage();
@@ -88,6 +89,7 @@ function goBack() {
   document.getElementById('page-' + prev).classList.add('active');
   document.getElementById('page-' + prev).classList.remove('slide-back');
   currentPage = prev;
+  setTimeout(bindSwipeDeletes, 200);
   if (prev === 'dashboard') renderDashboard();
   if (prev === 'profile') renderProfile();
   if (prev === 'students') renderStudentsPage();
@@ -378,10 +380,11 @@ function renderDetail(id) {
   document.getElementById('detail-total').textContent = s.totalHours; document.getElementById('detail-used').textContent = used; document.getElementById('detail-remain').textContent = s.remainingHours; document.getElementById('detail-progress').style.width = pct + '%'; document.getElementById('detail-progress-text').textContent = '已使用 ' + pct + '%';
   document.getElementById('progress-pct').textContent = '已完成 ' + ip + '%'; document.getElementById('progress-pct-bar').style.width = ip + '%'; document.getElementById('progress-nums').textContent = ci + ' / ' + ti + ' 项';
   const pays = DB.getStudentPayments(id); document.getElementById('total-paid').textContent = '¥' + pays.reduce((t,p) => t + p.amount, 0); document.getElementById('payment-count').textContent = '共 ' + pays.length + ' 笔';
-  document.getElementById('payment-list').innerHTML = pays.length === 0 ? '<div class="payment-empty">暂无缴费记录</div>' : pays.map(function(p){ return '<div class="payment-item"><span class="pay-date">'+p.date+'</span><span class="pay-pkg">'+escHtml(p.packageName)+'</span><span class="pay-hours">+'+p.hoursAdded+'课时</span><span class="pay-amount">¥'+p.amount+'</span><span class="expense-del" onclick="deletePayment(event,\''+p.id+'\')">✕</span></div>'; }).join('');
+  document.getElementById('payment-list').innerHTML = pays.length === 0 ? '<div class="payment-empty">暂无缴费记录</div>' : pays.map(function(p){ return '<div class="swipe-wrap"><div class="swipe-content card-sm"><div class="payment-item" style="border:none;padding:0;"><span class="pay-date">'+p.date+'</span><span class="pay-pkg">'+escHtml(p.packageName)+'</span><span class="pay-hours">+'+p.hoursAdded+'课时</span><span class="pay-amount">¥'+p.amount+'</span></div></div><div class="swipe-del" data-del="'+p.id+'" data-fn="deletePayment">删除</div></div>'; }).join('');
   const records = DB.getRecords().filter(r => r.studentId === id).sort((a,b) => b.date.localeCompare(a.date)); document.getElementById('record-count').textContent = '共 ' + records.length + ' 次';
-  document.getElementById('record-list').innerHTML = records.length === 0 ? '' : records.map(r => '<div class="record-card"><div class="record-header"><span class="record-date">'+r.date+'</span><span class="record-dur">'+r.duration+'课时</span><span class="record-del" onclick="deleteRecord(event,\''+r.id+'\')"></span></div>'+(r.checkedItems&&r.checkedItems.length>0||r.customItems&&r.customItems.length>0?'<div class="tag-list">'+(r.checkedItems||[]).filter(function(i){return i;}).map(function(i){return '<span class="tag-item">'+escHtml(i)+'</span>';}).join('')+(r.customItems||[]).filter(function(i){return i;}).map(function(i){return '<span class="tag-item-custom">'+escHtml(i)+'</span>';}).join('')+'</div>':'<div class="record-no-items">未记录训练项目</div>')+(r.notes?'<div class="record-note">'+escHtml(r.notes)+'</div>':'')+'</div>').join('');
+  document.getElementById('record-list').innerHTML = records.length === 0 ? '' : records.map(function(r){ return '<div class="swipe-wrap"><div class="swipe-content"><div class="record-card" style="margin:0;"><div class="record-header"><span class="record-date">'+r.date+'</span><span class="record-dur">'+r.duration+'课时</span></div>'+(r.checkedItems&&r.checkedItems.length>0||r.customItems&&r.customItems.length>0?'<div class="tag-list">'+(r.checkedItems||[]).filter(function(i){return i;}).map(function(i){return '<span class="tag-item">'+escHtml(i)+'</span>';}).join('')+(r.customItems||[]).filter(function(i){return i;}).map(function(i){return '<span class="tag-item-custom">'+escHtml(i)+'</span>';}).join('')+'</div>':'<div class="record-no-items">未记录训练项目</div>')+(r.notes?'<div class="record-note">'+escHtml(r.notes)+'</div>':'')+'</div></div><div class="swipe-del" data-del="'+r.id+'" data-fn="deleteRecord">删除</div></div>'; }).join('');
   document.getElementById('record-empty').style.display = records.length === 0 ? 'flex' : 'none';
+  setTimeout(bindSwipeDeletes, 100);
 }
 function openProgressPage(sid) { navigateTo('progress', { studentId: sid }); }
 function startTraining() { navigateTo('training', { studentId: currentDetailId }); }
@@ -450,10 +453,56 @@ function deleteJournal(id) { if (!confirm('删除这条纪要？')) return; DB.s
 function closeJournalModal() { document.getElementById('journal-modal').style.display = 'none'; }
 
 // ==================== Finance ====================
-function renderFinance() { const month = thisMonth(), pays = DB.getPayments(), exps = DB.getExpenses(), mi = pays.filter(p => p.date.startsWith(month)).reduce((s,p) => s + p.amount, 0), me = exps.filter(e => e.date.startsWith(month)).reduce((s,e) => s + e.amount, 0), profit = mi - me; document.getElementById('fin-income').textContent = '¥' + mi; document.getElementById('fin-expense').textContent = '¥' + me; document.getElementById('fin-profit').textContent = (profit >= 0 ? '¥' : '-¥') + Math.abs(profit); const ss = DB.getStudents(), rps = pays.sort((a,b) => b.date.localeCompare(a.date)).slice(0,10); document.getElementById('fin-income-list').innerHTML = rps.length === 0 ? '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:10px;">暂无收入</div>' : rps.map(p => { const st = ss.find(s => s.id === p.studentId); return '<div class="payment-item"><span class="pay-date">'+p.date+'</span><span class="pay-pkg">'+(st?escHtml(st.name):'')+' - '+escHtml(p.packageName)+'</span><span class="pay-hours">+'+p.hoursAdded+'课时</span><span class="pay-amount">¥'+p.amount+'</span></div>'; }).join(''); const re = exps.sort((a,b) => b.date.localeCompare(a.date)).slice(0,20); document.getElementById('expense-list').innerHTML = re.length === 0 ? '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:10px;">暂无支出</div>' : re.map(e => '<div class="expense-item"><span class="expense-date">'+e.date+'</span><span class="expense-cat">'+escHtml(e.category||'其他')+'</span><span class="expense-notes">'+escHtml(e.notes||'')+'</span><span class="expense-amount">-¥'+e.amount+'</span><span class="expense-del" onclick="deleteExpense(event,\''+e.id+'\')">✕</span></div>').join(''); const months = []; for (let i=5;i>=0;i--) { const d=new Date();d.setMonth(d.getMonth()-i);months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')); } const mv = Math.max(1,...months.map(m=>{const inc=pays.filter(p=>p.date.startsWith(m)).reduce((s,p)=>s+p.amount,0),exp=exps.filter(e=>e.date.startsWith(m)).reduce((s,e)=>s+e.amount,0);return Math.max(inc,exp);})); let ch = ''; months.forEach(m=>{const inc=pays.filter(p=>p.date.startsWith(m)).reduce((s,p)=>s+p.amount,0),exp=exps.filter(e=>e.date.startsWith(m)).reduce((s,e)=>s+e.amount,0);ch+='<div class="stats-bar-row"><span class="stats-bar-label">'+m+'</span><span class="stats-bar-count" style="color:#34C759;">+'+inc+'</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(inc/mv*100)+'%;background:#34C759;"></div></div></div><div class="stats-bar-row"><span class="stats-bar-label"></span><span class="stats-bar-count" style="color:#FF3B30;">-'+exp+'</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(exp/mv*100)+'%;background:#FF3B30;"></div></div></div>';}); document.getElementById('fin-month-chart').innerHTML = ch; }
+function renderFinance() { const month = thisMonth(), pays = DB.getPayments(), exps = DB.getExpenses(), mi = pays.filter(p => p.date.startsWith(month)).reduce((s,p) => s + p.amount, 0), me = exps.filter(e => e.date.startsWith(month)).reduce((s,e) => s + e.amount, 0), profit = mi - me; document.getElementById('fin-income').textContent = '¥' + mi; document.getElementById('fin-expense').textContent = '¥' + me; document.getElementById('fin-profit').textContent = (profit >= 0 ? '¥' : '-¥') + Math.abs(profit); const ss = DB.getStudents(), rps = pays.sort((a,b) => b.date.localeCompare(a.date)).slice(0,10); document.getElementById('fin-income-list').innerHTML = rps.length === 0 ? '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:10px;">暂无收入</div>' : rps.map(p => { const st = ss.find(s => s.id === p.studentId); return '<div class="payment-item"><span class="pay-date">'+p.date+'</span><span class="pay-pkg">'+(st?escHtml(st.name):'')+' - '+escHtml(p.packageName)+'</span><span class="pay-hours">+'+p.hoursAdded+'课时</span><span class="pay-amount">¥'+p.amount+'</span></div>'; }).join(''); const re = exps.sort((a,b) => b.date.localeCompare(a.date)).slice(0,20); document.getElementById('expense-list').innerHTML = re.length === 0 ? '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:10px;">暂无支出</div>' : re.map(function(e){ return '<div class="swipe-wrap"><div class="swipe-content card-sm" style="margin:0;"><div class="expense-item" style="border:none;padding:0;"><span class="expense-date">'+e.date+'</span><span class="expense-cat">'+escHtml(e.category||'其他')+'</span><span class="expense-notes">'+escHtml(e.notes||'')+'</span><span class="expense-amount">-¥'+e.amount+'</span></div></div><div class="swipe-del" data-del="'+e.id+'" data-fn="deleteExpense">删除</div></div>'; }).join(''); const months = []; for (let i=5;i>=0;i--) { const d=new Date();d.setMonth(d.getMonth()-i);months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')); } const mv = Math.max(1,...months.map(m=>{const inc=pays.filter(p=>p.date.startsWith(m)).reduce((s,p)=>s+p.amount,0),exp=exps.filter(e=>e.date.startsWith(m)).reduce((s,e)=>s+e.amount,0);return Math.max(inc,exp);})); let ch = ''; months.forEach(m=>{const inc=pays.filter(p=>p.date.startsWith(m)).reduce((s,p)=>s+p.amount,0),exp=exps.filter(e=>e.date.startsWith(m)).reduce((s,e)=>s+e.amount,0);ch+='<div class="stats-bar-row"><span class="stats-bar-label">'+m+'</span><span class="stats-bar-count" style="color:#34C759;">+'+inc+'</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(inc/mv*100)+'%;background:#34C759;"></div></div></div><div class="stats-bar-row"><span class="stats-bar-label"></span><span class="stats-bar-count" style="color:#FF3B30;">-'+exp+'</span><div class="stats-bar"><div class="stats-bar-fill" style="width:'+Math.round(exp/mv*100)+'%;background:#FF3B30;"></div></div></div>';}); document.getElementById('fin-month-chart').innerHTML = ch; }
 function showAddExpense() { document.getElementById('exp-amount').value='';document.getElementById('exp-date').value=todayStr();document.getElementById('exp-notes').value='';document.getElementById('expense-modal').style.display='flex'; }
 function confirmExpense() { const amt=parseInt(document.getElementById('exp-amount').value)||0;if(amt<=0){showToast('请输入金额');return;}const exps=DB.getExpenses();exps.push({id:genId(),date:document.getElementById('exp-date').value||todayStr(),amount:amt,category:document.getElementById('exp-category').value,notes:document.getElementById('exp-notes').value.trim()});DB.saveExpenses(exps);closeExpenseModal();renderFinance();showToast('支出已记录');}
-function deleteExpense(e,id){e.stopPropagation();if(!confirm('删除这条支出？'))return;DB.saveExpenses(DB.getExpenses().filter(x=>x.id!==id));renderFinance();showToast('已删除');}
+// ==================== Swipe to Delete ====================
+function initSwipe(el, onDelete) {
+  var startX = 0, startY = 0, moved = false;
+  el.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; startY = e.touches[0].clientY; moved = false; }, {passive:true});
+  el.addEventListener('touchmove', function(e){
+    var dx = e.touches[0].clientX - startX;
+    var dy = e.touches[0].clientY - startY;
+    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) { moved = true; }
+    if (moved && dx < -30) { el.classList.add('swiped'); }
+    if (moved && dx > 30) { el.classList.remove('swiped'); }
+  }, {passive:true});
+  el.addEventListener('touchend', function(){
+    if (!moved) return;
+    setTimeout(function(){ el.classList.remove('swiped'); }, 3000);
+  });
+  el.querySelector('.swipe-del').addEventListener('click', function(e){ e.stopPropagation(); onDelete(); });
+}
+function swipeWrap(innerHTML, delId, delFn) {
+  return '<div class="swipe-wrap" data-sid="'+delId+'"><div class="swipe-content" style="background:inherit;">'+innerHTML+'</div><div class="swipe-del" data-del="'+delId+'">删除</div></div>';
+}
+function bindSwipeDeletes() {
+  document.querySelectorAll('.swipe-wrap').forEach(function(el){
+    var delBtn = el.querySelector('.swipe-del');
+    if (!delBtn || el.dataset.bound) return;
+    el.dataset.bound = '1';
+    var sid = delBtn.dataset.del;
+    var fnName = delBtn.dataset.fn;
+    var startX=0,startY=0,moved=false;
+    el.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;moved=false;},{passive:true});
+    el.addEventListener('touchmove',function(e){
+      var dx=e.touches[0].clientX-startX,dy=e.touches[0].clientY-startY;
+      if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy))moved=true;
+      if(moved&&dx<-25)el.classList.add('swiped');
+      if(moved&&dx>25)el.classList.remove('swiped');
+    },{passive:true});
+    el.addEventListener('touchend',function(){if(moved)setTimeout(function(){el.classList.remove('swiped');},3000);});
+    delBtn.addEventListener('click',function(e){e.stopPropagation();el.classList.remove('swiped');
+      if(fnName==='deletePayment')deletePayment(e,sid);
+      else if(fnName==='deleteExpense')deleteExpense(e,sid);
+      else if(fnName==='deleteRecord')deleteRecord(e,sid);
+      else if(fnName==='deleteSchedule')deleteSchedule(e,sid);
+      else if(fnName==='deleteJournal')deleteJournal(sid);
+    });
+  });
+}
+
+function deleteExpense(e,id){e.stopPropagation();if(!confirm('删除这条支出？'))return;DB.saveExpenses(DB.getExpenses().filter(function(x){return x.id!==id;}));renderFinance();showToast('已删除');}
 function deletePayment(e,id){e.stopPropagation();if(!confirm('删除这条缴费记录？将扣减对应课时。'))return;var payments=DB.getPayments();var target=payments.find(function(p){return p.id===id;});if(target){var students=DB.getStudents();var s=students.find(function(st){return st.id===target.studentId;});if(s){s.totalHours-=target.hoursAdded;s.remainingHours=Math.max(0,s.remainingHours-target.hoursAdded);DB.saveStudents(students);}}DB.savePayments(payments.filter(function(p){return p.id!==id;}));renderFinance();renderDetail(currentDetailId);showToast('已删除并扣减课时');}
 function closeExpenseModal(){document.getElementById('expense-modal').style.display='none';}
 

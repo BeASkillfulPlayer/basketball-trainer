@@ -186,6 +186,13 @@ input,textarea,button{font-family:inherit;font-size:inherit;border:none;backgrou
 .modal-box{background:var(--card);border-radius:var(--r-xl);padding:28px;width:100%;max-width:350px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.12);animation:scaleIn 0.3s var(--spring)}@keyframes scaleIn{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
 .modal-title{font-size:18px;font-weight:700;margin-bottom:6px}.modal-body{font-size:15px;color:var(--text-2);margin-bottom:22px;line-height:1.5}.modal-actions{display:flex;gap:10px}.modal-actions button{flex:1;height:46px;border-radius:var(--r-full);font-size:16px;font-weight:500}
 
+/* ==================== Swipe to Delete ==================== */
+.swipe-wrap{position:relative;overflow:hidden;border-radius:var(--r-md);margin-bottom:4px}
+.swipe-wrap .swipe-content{position:relative;z-index:1;background:inherit;transition:transform 0.25s var(--smooth)}
+.swipe-wrap .swipe-del{position:absolute;right:0;top:0;bottom:0;width:72px;background:var(--red);color:#FFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer;border-radius:0 var(--r-md) var(--r-md) 0;z-index:0}
+.swipe-wrap.swiped .swipe-content{transform:translateX(-72px)}
+.swipe-del-bg{background:var(--red);color:#FFF}
+
 /* ==================== Misc ==================== */
 .stepper{display:flex;align-items:center;gap:10px}.stepper-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,59,48,0.06);font-size:20px;display:flex;align-items:center;justify-content:center;color:var(--red);transition:all 0.15s}.stepper-btn:active{background:rgba(255,59,48,0.14);transform:scale(0.9)}.stepper-input{width:52px;height:40px;text-align:center;font-size:20px;font-weight:700;color:var(--red);background:var(--card-alt);border-radius:var(--r-sm);-webkit-appearance:none;border:0.5px solid var(--sep)}
 
