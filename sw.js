@@ -2,7 +2,7 @@
  * Service Worker - 离线支持
  * 让 App 在无网络时也能打开
  */
-const CACHE_NAME = 'basketball-trainer-v7.3';
+const CACHE_NAME = 'basketball-trainer-v7.4';
 const FILES_TO_CACHE = [
   '/',
   'index.html',
