@@ -202,7 +202,7 @@ function renderDashboard() {
   const journalCount = DB.getJournals().length;
 
   // Avatar
-  var avatarEl = document.getElementById('dash-avatar-lg');
+  var avatarEl = document.getElementById('dash-avatar');
   if (trainer && trainer.avatar) {
     avatarEl.innerHTML = '<img src="'+trainer.avatar+'" alt="">';
   } else {
