@@ -73,9 +73,9 @@
   <div id="page-profile" class="page">
     <div class="nav-bar"><div class="nav-back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 6 12 15 21"/></svg></div><div class="nav-title">我的</div><div class="nav-placeholder"></div></div>
     <div class="page-content">
-      <input type="file" accept="image/*" id="avatar-file-input" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" onchange="uploadAvatar(event)">
+      <input type="file" accept="image/png,image/jpeg,image/jpg,image/heic,image/heif" id="avatar-file-input" style="position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0.01;" onchange="uploadAvatar(event)">
       <div class="prof-hero">
-        <label for="avatar-file-input" style="cursor:pointer;display:block;"><div class="prof-avatar" id="prof-avatar">?</div></label>
+        <div class="prof-avatar" id="prof-avatar" onclick="var i=document.getElementById('avatar-file-input');i.click();">?</div>
         <div class="prof-name" id="prof-name"></div>
         <div class="prof-phone" id="prof-phone"></div>
         <div class="prof-bio" id="prof-bio">点击编辑添加个人简介</div>
