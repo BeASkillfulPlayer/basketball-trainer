@@ -165,10 +165,11 @@ function startLoginParticles() {
   var canvas = document.getElementById('login-particle-canvas');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
-  var rect = canvas.parentElement.getBoundingClientRect();
-  var w = 220, h = 90;
+  var w = 240, h = 100;
   canvas.width = w; canvas.height = h;
   canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+  canvas.style.marginLeft = '-' + (w/2) + 'px';
+  canvas.style.marginTop = '-' + (h/2) + 'px';
 
   var particles = [];
   var count = 25;
